@@ -5,15 +5,13 @@ interface MediaUploaderProps {
   value: string | null;
   onChange: (value: string | null) => void;
   accept?: string;
-  placeholder?: string;
 }
 
-const MediaUploader: React.FC<MediaUploaderProps> = ({
-  label,
-  value,
-  onChange,
-  accept = "image/*,video/*",
-  placeholder = "Выберите файл..."
+const MediaUploader: React.FC<MediaUploaderProps> = ({ 
+  label, 
+  value, 
+  onChange, 
+  accept = "*" 
 }) => {
   const [isUploading, setIsUploading] = useState(false);
 

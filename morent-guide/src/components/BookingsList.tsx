@@ -60,7 +60,8 @@ const BookingsList: React.FC<BookingsListProps> = ({
 
   const handleGenerateNewSlug = async (booking: Booking) => {
     try {
-      const newSlug = await bookingApi.generateSlug();
+      const slugResponse = await bookingApi.generateSlug();
+      const newSlug = slugResponse.slug;
       await bookingApi.update(booking.id, { ...booking, slug: newSlug });
       
       setBookings(prev => prev.map(b => 

@@ -142,7 +142,9 @@ const AdminPage: React.FC = () => {
                     setRefreshTrigger(prev => prev + 1);
                   } catch (error) {
                     console.error('Error saving apartment:', error);
-                    const errorMessage = error.response?.data?.message || error.message || 'Неизвестная ошибка';
+                    const errorMessage = error instanceof Error 
+                      ? (error as any).response?.data?.message || error.message || 'Неизвестная ошибка'
+                      : 'Неизвестная ошибка';
                     alert(`Ошибка при сохранении апартамента: ${errorMessage}`);
                   } finally {
                     setIsLoading(false);
@@ -229,7 +231,7 @@ const AdminPage: React.FC = () => {
                     setRefreshTrigger(prev => prev + 1);
                   } catch (error) {
                     console.error('Error saving booking:', error);
-                    alert(`Ошибка при сохранении бронирования: ${error.message || error}`);
+                    alert(`Ошибка при сохранении бронирования: ${error instanceof Error ? error.message : String(error)}`);
                   } finally {
                     setIsLoading(false);
                   }

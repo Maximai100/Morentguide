@@ -46,10 +46,10 @@ export const apartmentApi = {
       return response.data.data;
     } catch (error) {
       console.error('API Error:', error);
-      console.error('Error response:', error.response?.data);
-      console.error('Error status:', error.response?.status);
-      console.error('Error message:', error.message);
-      throw new Error(`API Error: ${error.response?.status} - ${error.response?.data?.message || error.message}`);
+      console.error('Error response:', error instanceof Error && 'response' in error ? (error as any).response?.data : 'No response data');
+      console.error('Error status:', error instanceof Error && 'response' in error ? (error as any).response?.status : 'No status');
+      console.error('Error message:', error instanceof Error ? error.message : String(error));
+      throw new Error(`API Error: ${error instanceof Error && 'response' in error ? (error as any).response?.status : 'Unknown'} - ${error instanceof Error && 'response' in error ? (error as any).response?.data?.message || error.message : String(error)}`);
     }
   },
   

@@ -51,8 +51,8 @@ const ApartmentForm: React.FC<ApartmentFormProps> = ({
       await onSave(dataToSave);
       console.log('Apartment saved successfully');
     } catch (error) {
-      console.error('Error in handleSubmit:', error);
-      alert(`Детальная ошибка: ${error.message || error}`);
+      console.error('Error creating apartment:', error);
+      alert(`Детальная ошибка: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 
@@ -149,14 +149,14 @@ const ApartmentForm: React.FC<ApartmentFormProps> = ({
              
              <MediaUploader
                label="Видео входа"
-               value={formData.video_entrance}
+               value={formData.video_entrance || null}
                onChange={(value) => setFormData(prev => ({ ...prev, video_entrance: value }))}
                accept="video/*"
              />
              
              <MediaUploader
                label="Видео замка"
-               value={formData.video_lock}
+               value={formData.video_lock || null}
                onChange={(value) => setFormData(prev => ({ ...prev, video_lock: value }))}
                accept="video/*"
              />
