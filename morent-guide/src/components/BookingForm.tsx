@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { Booking, Apartment } from '../types';
-import { apartmentApi, bookingApi } from '../utils/api';
+import { bookingApi, apartmentApi } from '../utils/api';
 import { generateSlug } from '../utils/helpers';
 
 interface BookingFormProps {
@@ -16,381 +16,402 @@ const BookingForm: React.FC<BookingFormProps> = ({
   onCancel,
   isLoading = false
 }) => {
+  const [currentStep, setCurrentStep] = useState(1);
   const [apartments, setApartments] = useState<Apartment[]>([]);
   const [selectedApartment, setSelectedApartment] = useState<Apartment | null>(null);
-  const [customLockCode, setCustomLockCode] = useState<string>('');
+  const [isBookingCreated, setIsBookingCreated] = useState(false);
+  const [customLockCode, setCustomLockCode] = useState('');
+  
   const [formData, setFormData] = useState<Omit<Booking, 'id'>>({
     guest_name: booking?.guest_name || '',
-    checkin_date: booking?.checkin_date || '',
-    checkout_date: booking?.checkout_date || '',
+    guest_phone: booking?.guest_phone || '',
+    date_start: booking?.date_start || '',
+    date_end: booking?.date_end || '',
     apartment_id: booking?.apartment_id || '',
-    slug: booking?.slug || generateSlug()
+    apartment_title: booking?.apartment_title || '',
+    status: booking?.status || 'active',
+    lock_code: booking?.lock_code || '',
+    link: booking?.link || '',
+    welcome_message: booking?.welcome_message || '',
   });
-  const [isBookingCreated, setIsBookingCreated] = useState<boolean>(!!booking);
 
-  // Загружаем список апартаментов
   useEffect(() => {
-    const loadApartments = async () => {
-      try {
-        const data = await apartmentApi.getAll();
-        setApartments(data);
-        
-        // Если редактируем бронирование, находим связанный апартамент
-        if (booking?.apartment_id) {
-          const apartment = data.find(apt => apt.id === booking.apartment_id);
-          setSelectedApartment(apartment || null);
-        }
-      } catch (error) {
-        console.error('Error loading apartments:', error);
-      }
-    };
-
     loadApartments();
-  }, [booking?.apartment_id]);
+  }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    console.log('Saving booking data:', formData);
-    console.log('Is booking created:', isBookingCreated);
-    
-    // Если бронирование уже создано при генерации slug, обновляем его
-    if (isBookingCreated && !booking) {
-      // Найдем созданное бронирование по slug и обновим его
-      try {
-        const bookings = await bookingApi.getAll();
-        const existingBooking = bookings.find(b => b.slug === formData.slug);
-        if (existingBooking) {
-          await bookingApi.update(existingBooking.id, formData);
-          alert('Бронирование обновлено!');
-        }
-      } catch (error) {
-        console.error('Error updating booking:', error);
-        alert('Ошибка при обновлении бронирования');
+  useEffect(() => {
+    if (formData.apartment_id) {
+      const apartment = apartments.find(a => a.id === formData.apartment_id);
+      if (apartment) {
+        setSelectedApartment(apartment);
+        setFormData(prev => ({
+          ...prev,
+          apartment_title: apartment.title
+        }));
       }
-    } else {
-      // Обычное сохранение
-      const dataToSave = booking 
-        ? { ...formData, id: booking.id }
-        : formData;
-      
-      await onSave(dataToSave);
     }
-  };
+  }, [formData.apartment_id, apartments]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    
-    // Если изменился апартамент, обновляем выбранный апартамент
-    if (name === 'apartment_id') {
-      const apartment = apartments.find(apt => apt.id === value);
-      setSelectedApartment(apartment || null);
+  const loadApartments = async () => {
+    try {
+      const data = await apartmentApi.getAll();
+      setApartments(data);
+    } catch (err) {
+      console.error('Error loading apartments:', err);
     }
   };
 
   const generateNewSlug = async () => {
     try {
-      // Проверяем, есть ли минимальные данные для создания бронирования
-      if (!formData.guest_name || !formData.apartment_id || !formData.checkin_date || !formData.checkout_date) {
-        alert('Заполните все обязательные поля перед генерацией ссылки');
-        return;
-      }
+      const slug = generateSlug();
+      const link = `${window.location.origin}/booking/${slug}`;
+      
+      setFormData(prev => ({
+        ...prev,
+        link,
+        lock_code: customLockCode || Math.random().toString(36).substring(2, 8).toUpperCase()
+      }));
 
-      const newSlug = generateSlug();
-      setFormData(prev => ({ ...prev, slug: newSlug }));
+      // Создаем бронирование в Directus сразу
+      const newBooking = {
+        ...formData,
+        link,
+        lock_code: customLockCode || Math.random().toString(36).substring(2, 8).toUpperCase()
+      };
 
-      // Если это новое бронирование, создаем его в базе данных
-      if (!booking) {
-        try {
-          console.log('Creating booking with slug:', newSlug);
-                     const createdBooking = await bookingApi.create({
-             guest_name: formData.guest_name,
-             apartment_id: formData.apartment_id,
-             checkin_date: formData.checkin_date,
-             checkout_date: formData.checkout_date,
-             slug: newSlug
-           });
-           console.log('Booking created successfully:', createdBooking);
-           setIsBookingCreated(true);
-           alert('Бронирование создано! Ссылка теперь активна.');
-        } catch (error) {
-          console.error('Error creating booking:', error);
-          alert('Ошибка при создании бронирования. Попробуйте еще раз.');
-        }
-      } else {
-        // Если редактируем существующее, обновляем slug
-        try {
-          await bookingApi.update(booking.id, { slug: newSlug });
-          alert('Ссылка обновлена!');
-        } catch (error) {
-          console.error('Error updating slug:', error);
-          alert('Ошибка при обновлении ссылки.');
-        }
-      }
-    } catch (error) {
-      console.error('Error generating slug:', error);
-      alert('Ошибка при генерации ссылки');
+      await bookingApi.create(newBooking);
+      setIsBookingCreated(true);
+    } catch (err) {
+      console.error('Error generating slug:', err);
     }
+  };
+
+  const generateWelcomeMessage = () => {
+    const message = `Здравствуйте, ${formData.guest_name}! Добро пожаловать в MORENT ��
+
+Ваша персональная инструкция по заселению: ${formData.link}
+
+Код доступа: ${formData.lock_code}
+
+Ждем вас! ��`;
+    
+    setFormData(prev => ({ ...prev, welcome_message: message }));
   };
 
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      alert('Ссылка скопирована в буфер обмена');
-    } catch (error) {
-      console.error('Error copying to clipboard:', error);
-      alert('Ошибка при копировании ссылки');
+      alert('Скопировано в буфер обмена!');
+    } catch (err) {
+      console.error('Failed to copy:', err);
     }
   };
 
-  const getGuestLink = () => {
-    if (!formData.slug) return '';
-    return `${window.location.origin}/morent-guide/booking/${formData.slug}`;
+  const sendToWhatsApp = (message: string) => {
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${formData.guest_phone.replace(/\D/g, '')}?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
   };
 
-  const generateWelcomeMessage = () => {
-    if (!formData.guest_name || !formData.slug) return '';
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (currentStep < 3) {
+      setCurrentStep(currentStep + 1);
+      return;
+    }
     
-    const guestLink = getGuestLink();
-    const lockCode = customLockCode || selectedApartment?.code_lock || 'не указан';
-    
-    return `Здравствуйте, ${formData.guest_name} !
-
-Добро пожаловать в MORENT 🌴
-
-Ваша персональная инструкция по заселению: ${guestLink}
-
-Код замка: ${lockCode}
-
-С уважением,
-Команда MORENT`;
-  };
-
-  const copyMessage = async () => {
-    const message = generateWelcomeMessage();
-    if (message) {
-      await copyToClipboard(message);
+    try {
+      await onSave(formData);
+    } catch (err) {
+      console.error('Error saving booking:', err);
     }
   };
 
-  const sendWhatsApp = () => {
-    const message = generateWelcomeMessage();
-    if (message) {
-      const encodedMessage = encodeURIComponent(message);
-      const phone = selectedApartment?.manager_phone?.replace(/\D/g, '') || '';
-      const whatsappUrl = `https://wa.me/${phone}?text=${encodedMessage}`;
-      window.open(whatsappUrl, '_blank');
-    }
-  };
+  const steps = [
+    { title: 'Информация о госте', icon: '��' },
+    { title: 'Выбор апартамента', icon: '��' },
+    { title: 'Создание ссылки', icon: '🔗' }
+  ];
 
   return (
-    <div className="card p-6 max-w-4xl mx-auto">
-      <h3 className="text-xl font-heading font-semibold mb-6">
-        {booking ? 'Редактировать бронирование' : 'Создать новое бронирование'}
-      </h3>
+    <div className="form-card animate-fade-in">
+      <div className="form-header">
+        <h2 className="form-title">
+          {booking ? 'Редактировать бронирование' : 'Создать новое бронирование'}
+        </h2>
+        
+        {/* Прогресс-бар */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            {steps.map((step, index) => (
+              <div key={index} className="flex items-center">
+                <div className={`flex items-center justify-center w-10 h-10 rounded-full text-sm font-medium ${
+                  currentStep > index + 1 
+                    ? 'bg-green-500 text-white' 
+                    : currentStep === index + 1 
+                    ? 'bg-blue-500 text-white' 
+                    : 'bg-gray-200 text-gray-600'
+                }`}>
+                  {currentStep > index + 1 ? '✓' : index + 1}
+                </div>
+                <span className="ml-2 text-sm font-medium text-gray-700">
+                  {step.icon} {step.title}
+                </span>
+                {index < steps.length - 1 && (
+                  <div className={`w-16 h-1 mx-4 ${
+                    currentStep > index + 1 ? 'bg-green-500' : 'bg-gray-200'
+                  }`}></div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Основная информация */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Имя гостя
-            </label>
-            <input
-              type="text"
-              name="guest_name"
-              value={formData.guest_name}
-              onChange={handleInputChange}
-              className="input-morent"
-              placeholder="Иван Иванов"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Апартамент
-            </label>
-            <select
-              name="apartment_id"
-              value={formData.apartment_id}
-              onChange={handleInputChange}
-              className="input-morent"
-              required
-            >
-              <option value="">Выберите апартамент</option>
-              {apartments.map((apartment) => (
-                <option key={apartment.id} value={apartment.id}>
-                  {apartment.title} (кв. {apartment.apartment_number})
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Дата заезда
-            </label>
-            <input
-              type="date"
-              name="checkin_date"
-              value={formData.checkin_date}
-              onChange={handleInputChange}
-              className="input-morent"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Дата выезда
-            </label>
-            <input
-              type="date"
-              name="checkout_date"
-              value={formData.checkout_date}
-              onChange={handleInputChange}
-              className="input-morent"
-              required
-            />
-          </div>
-        </div>
-
-        {/* Информация о выбранном апартаменте */}
-        {selectedApartment && (
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h4 className="font-medium text-gray-900 mb-3">Информация об апартаменте</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div>
-                <span className="font-medium">Название:</span> {selectedApartment.title}
-              </div>
-              <div>
-                <span className="font-medium">Адрес:</span> {selectedApartment.base_address}, корп. {selectedApartment.building_number}, кв. {selectedApartment.apartment_number}
-              </div>
-              <div>
-                <span className="font-medium">Wi-Fi:</span> {selectedApartment.wifi_name}
-              </div>
-              <div>
-                <span className="font-medium">Код подъезда:</span> {selectedApartment.code_building}
-              </div>
-              <div>
-                <span className="font-medium">Код замка:</span> {selectedApartment.code_lock}
-              </div>
-              <div>
-                <span className="font-medium">Менеджер:</span> {selectedApartment.manager_name}
-              </div>
-            </div>
-            
-            {/* Поле для изменения кода замка */}
-            <div className="mt-4 pt-4 border-t border-gray-200">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Изменить код замка (опционально)
-              </label>
-              <input
-                type="text"
-                value={customLockCode}
-                onChange={(e) => setCustomLockCode(e.target.value)}
-                className="input-morent"
-                placeholder="Введите новый код замка"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                Если оставить пустым, будет использован код из апартамента
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Ссылка для гостя */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h4 className="font-medium text-gray-900">Ссылка для гостя</h4>
-                         <button
-               type="button"
-               onClick={generateNewSlug}
-               className="btn-secondary text-sm"
-               disabled={isLoading}
-             >
-               {isBookingCreated ? 'Сгенерировать новую ссылку' : 'Создать бронирование и сгенерировать ссылку'}
-             </button>
-          </div>
-
-                     {formData.slug && (
-             <div className="bg-blue-50 p-4 rounded-lg">
-               <div className="flex items-center justify-between">
-                 <div className="flex-1">
-                   <p className="text-sm font-medium text-gray-700 mb-1">Ссылка для гостя:</p>
-                   <p className="text-sm text-blue-600 break-all">{getGuestLink()}</p>
-                   {isBookingCreated && (
-                     <p className="text-xs text-green-600 mt-1">✅ Бронирование создано в базе данных</p>
-                   )}
-                 </div>
-                 <button
-                   type="button"
-                   onClick={() => copyToClipboard(getGuestLink())}
-                   className="btn-primary ml-4 text-sm"
-                   disabled={!isBookingCreated}
-                 >
-                   {isBookingCreated ? 'Копировать' : 'Сначала создайте бронирование'}
-                 </button>
-               </div>
-             </div>
-           )}
-        </div>
-
-        {/* Сообщение для гостя */}
-        {formData.guest_name && formData.slug && (
-          <div className="space-y-4">
-            <h4 className="font-medium text-gray-900">Сообщение для гостя</h4>
-            
-            <div className="bg-green-50 p-4 rounded-lg">
-              <div className="mb-3">
-                <p className="text-sm font-medium text-gray-700 mb-2">Предварительный просмотр:</p>
-                <div className="bg-white p-3 rounded border text-sm whitespace-pre-line">
-                  {generateWelcomeMessage()}
+        {/* Шаг 1: Информация о госте */}
+        {currentStep === 1 && (
+          <div className="animate-scale-in">
+            <div className="glass-dark p-6 rounded-xl mb-6">
+              <h3 className="text-lg font-semibold mb-4 flex items-center">
+                �� Информация о госте
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="form-label">Имя гостя *</label>
+                  <input
+                    type="text"
+                    value={formData.guest_name}
+                    onChange={(e) => setFormData(prev => ({ ...prev, guest_name: e.target.value }))}
+                    className="input-enhanced"
+                    required
+                    autoFocus
+                  />
+                </div>
+                
+                <div>
+                  <label className="form-label">Телефон гостя *</label>
+                  <input
+                    type="tel"
+                    value={formData.guest_phone}
+                    onChange={(e) => setFormData(prev => ({ ...prev, guest_phone: e.target.value }))}
+                    className="input-enhanced"
+                    required
+                    placeholder="+7 (999) 123-45-67"
+                  />
                 </div>
               </div>
-              
-              <div className="flex space-x-3">
-                <button
-                  type="button"
-                  onClick={copyMessage}
-                  className="btn-primary text-sm"
-                  disabled={isLoading}
-                >
-                  📋 Копировать сообщение
-                </button>
-                
-                <button
-                  type="button"
-                  onClick={sendWhatsApp}
-                  className="btn-secondary text-sm"
-                  disabled={isLoading}
-                >
-                  📱 Отправить в WhatsApp
-                </button>
-              </div>
             </div>
           </div>
         )}
 
-        {/* Кнопки действий */}
-        <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+        {/* Шаг 2: Выбор апартамента */}
+        {currentStep === 2 && (
+          <div className="animate-scale-in">
+            <div className="glass-dark p-6 rounded-xl mb-6">
+              <h3 className="text-lg font-semibold mb-4 flex items-center">
+                �� Выбор апартамента
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="form-label">Апартамент *</label>
+                  <select
+                    value={formData.apartment_id}
+                    onChange={(e) => setFormData(prev => ({ ...prev, apartment_id: e.target.value }))}
+                    className="input-enhanced"
+                    required
+                  >
+                    <option value="">Выберите апартамент</option>
+                    {apartments.map(apartment => (
+                      <option key={apartment.id} value={apartment.id}>
+                        {apartment.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="form-label">Статус</label>
+                  <select
+                    value={formData.status}
+                    onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value }))}
+                    className="input-enhanced"
+                  >
+                    <option value="active">Активно</option>
+                    <option value="completed">Завершено</option>
+                    <option value="cancelled">Отменено</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div>
+                  <label className="form-label">Дата заезда *</label>
+                  <input
+                    type="date"
+                    value={formData.date_start}
+                    onChange={(e) => setFormData(prev => ({ ...prev, date_start: e.target.value }))}
+                    className="input-enhanced"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="form-label">Дата выезда *</label>
+                  <input
+                    type="date"
+                    value={formData.date_end}
+                    onChange={(e) => setFormData(prev => ({ ...prev, date_end: e.target.value }))}
+                    className="input-enhanced"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Превью выбранного апартамента */}
+            {selectedApartment && (
+              <div className="card-enhanced p-6 animate-fade-in">
+                <h4 className="text-lg font-semibold mb-3">Выбранный апартамент:</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p><strong>Название:</strong> {selectedApartment.title}</p>
+                    <p><strong>Адрес:</strong> {selectedApartment.base_address}</p>
+                    <p><strong>Менеджер:</strong> {selectedApartment.manager_name}</p>
+                  </div>
+                  <div>
+                    <p><strong>Телефон:</strong> {selectedApartment.manager_phone}</p>
+                    <p><strong>WiFi:</strong> {selectedApartment.wifi_name}</p>
+                    <p><strong>Пароль WiFi:</strong> {selectedApartment.wifi_password}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Шаг 3: Создание ссылки */}
+        {currentStep === 3 && (
+          <div className="animate-scale-in">
+            <div className="glass-dark p-6 rounded-xl mb-6">
+              <h3 className="text-lg font-semibold mb-4 flex items-center">
+                🔗 Создание ссылки для гостя
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="form-label">Код замка (опционально)</label>
+                  <input
+                    type="text"
+                    value={customLockCode}
+                    onChange={(e) => setCustomLockCode(e.target.value)}
+                    className="input-enhanced"
+                    placeholder="Автоматически сгенерируется"
+                  />
+                </div>
+                
+                <div>
+                  <label className="form-label">Сгенерированная ссылка</label>
+                  <div className="input-enhanced bg-gray-50 text-gray-600">
+                    {formData.link || 'Ссылка будет создана автоматически'}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6">
+                <button
+                  type="button"
+                  onClick={generateNewSlug}
+                  className="btn-gradient mr-4"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <span className="loading-spinner mr-2"></span>
+                  ) : null}
+                  🔗 Создать ссылку
+                </button>
+              </div>
+            </div>
+
+            {/* Приветственное сообщение */}
+            {isBookingCreated && (
+              <div className="card-enhanced p-6 animate-fade-in">
+                <h4 className="text-lg font-semibold mb-4">Приветственное сообщение для гостя:</h4>
+                
+                <div className="mb-4">
+                  <textarea
+                    value={formData.welcome_message}
+                    onChange={(e) => setFormData(prev => ({ ...prev, welcome_message: e.target.value }))}
+                    className="input-enhanced h-32"
+                    placeholder="Сообщение будет сгенерировано автоматически"
+                  />
+                </div>
+
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={generateWelcomeMessage}
+                    className="btn-gradient"
+                  >
+                    ✨ Сгенерировать сообщение
+                  </button>
+                  
+                  <button
+                    type="button"
+                    onClick={() => copyToClipboard(formData.welcome_message)}
+                    className="btn-coral-gradient"
+                    disabled={!formData.welcome_message}
+                  >
+                    📋 Копировать сообщение
+                  </button>
+                  
+                  <button
+                    type="button"
+                    onClick={() => sendToWhatsApp(formData.welcome_message)}
+                    className="btn-coral-gradient"
+                    disabled={!formData.welcome_message || !formData.guest_phone}
+                  >
+                    📱 Отправить в WhatsApp
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Кнопки навигации */}
+        <div className="flex justify-between pt-6">
           <button
             type="button"
-            onClick={onCancel}
-            className="btn-secondary"
-            disabled={isLoading}
+            onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
+            className="btn-coral-gradient"
+            disabled={currentStep === 1}
           >
-            Отмена
+            ← Назад
           </button>
-                     <button
-             type="submit"
-             className="btn-primary"
-             disabled={isLoading}
-           >
-             {isLoading ? 'Сохранение...' : (booking ? 'Обновить' : (isBookingCreated ? 'Обновить' : 'Создать'))}
-           </button>
+          
+          <div className="flex space-x-3">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="btn-coral-gradient"
+            >
+              Отмена
+            </button>
+            
+            <button
+              type="submit"
+              className="btn-gradient"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <span className="loading-spinner mr-2"></span>
+              ) : null}
+              {currentStep === 3 ? 'Сохранить бронирование' : 'Далее →'}
+            </button>
+          </div>
         </div>
       </form>
     </div>

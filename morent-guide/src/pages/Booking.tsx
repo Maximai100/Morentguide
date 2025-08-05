@@ -1,252 +1,157 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import type { BookingPageData } from '../types';
-import { bookingApi } from '../utils/api';
-import { formatDate } from '../utils/helpers';
-
-const BookingPage: React.FC = () => {
-  const { slug } = useParams<{ slug: string }>();
-  const [data, setData] = useState<BookingPageData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchBookingData = async () => {
-      if (!slug) {
-        setError('Некорректная ссылка');
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const bookingData = await bookingApi.getBySlug(slug);
-        setData(bookingData);
-      } catch (err) {
-        setError('Бронирование не найдено');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBookingData();
-  }, [slug]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-morent-navy mx-auto"></div>
-          <p className="mt-4 text-gray-600">Загрузка...</p>
-        </div>
+<div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 animate-fade-in">
+{/* Skeleton Loading */}
+<div className="container mx-auto px-4 py-8">
+  <div className="max-w-4xl mx-auto">
+    <div className="skeleton-title w-64 h-12 mb-8"></div>
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="lg:col-span-2">
+        <div className="skeleton-card h-96 mb-8"></div>
+        <div className="skeleton-card h-64 mb-8"></div>
+        <div className="skeleton-card h-80"></div>
       </div>
-    );
-  }
-
-  if (error || !data) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-heading font-bold text-gray-900 mb-4">
-            Упс! Что-то пошло не так
-          </h1>
-          <p className="text-gray-600">{error}</p>
-        </div>
+      <div>
+        <div className="skeleton-card h-48 mb-6"></div>
+        <div className="skeleton-card h-32 mb-6"></div>
+        <div className="skeleton-card h-64"></div>
       </div>
-    );
-  }
-
-  const { booking, apartment } = data;
-
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Заголовок с приветствием */}
-      <header className="bg-morent-navy text-white">
-        <div className="container-morent py-12">
-          <h1 className="text-4xl font-heading font-bold mb-4">
-            Добро пожаловать, {booking.guest_name}!
-          </h1>
-          <p className="text-xl text-blue-100">
-            {apartment.title}
-          </p>
-          <p className="text-lg text-blue-200">
-            Корпус {apartment.building_number}, апартамент {apartment.apartment_number}
-          </p>
-          <div className="mt-6 flex flex-wrap gap-4 text-sm">
-            <span className="bg-white/20 px-3 py-1 rounded-full">
-              Заезд: {formatDate(booking.checkin_date)}
-            </span>
-            <span className="bg-white/20 px-3 py-1 rounded-full">
-              Выезд: {formatDate(booking.checkout_date)}
-            </span>
-          </div>
-        </div>
-      </header>
-
-      <main className="container-morent py-8 space-y-8">
-        {/* Галерея фотографий */}
-        {apartment.photos && Array.isArray(apartment.photos) && apartment.photos.length > 0 && (
-          <section className="card p-6">
-            <h2 className="text-2xl font-heading font-semibold mb-4">
-              Ваши апартаменты
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {apartment.photos.map((photo, index) => (
-                <img
-                  key={index}
-                  src={photo}
-                  alt={`${apartment.title} - фото ${index + 1}`}
-                  className="w-full h-48 object-cover rounded-lg"
-                />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Информация о заселении */}
-        <section className="card p-6">
-          <h2 className="text-2xl font-heading font-semibold mb-4">
-            Информация о заселении
-          </h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Адрес</h3>
-              <p className="text-gray-700">
-                {apartment.base_address}
-              </p>
-              <p className="text-gray-600 text-sm mt-1">
-                Корпус {apartment.building_number}, апартамент {apartment.apartment_number}
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Коды доступа</h3>
-              <div className="space-y-2">
-                <p><span className="font-medium">Код от подъезда:</span> {apartment.code_building}</p>
-                <p><span className="font-medium">Код от замка:</span> {apartment.code_lock}</p>
-              </div>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Wi-Fi</h3>
-              <div className="space-y-2">
-                <p><span className="font-medium">Сеть:</span> {apartment.wifi_name}</p>
-                <p><span className="font-medium">Пароль:</span> {apartment.wifi_password}</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Видео-инструкции */}
-        {(apartment.video_entrance || apartment.video_lock) && (
-          <section className="card p-6">
-            <h2 className="text-2xl font-heading font-semibold mb-4">
-              Видео-инструкции
-            </h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              {apartment.video_entrance && apartment.video_entrance !== null && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Как найти подъезд</h3>
-                  <video 
-                    controls 
-                    className="w-full rounded-lg"
-                    src={apartment.video_entrance}
-                  />
-                </div>
-              )}
-              {apartment.video_lock && apartment.video_lock !== null && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Как открыть замок</h3>
-                  <video 
-                    controls 
-                    className="w-full rounded-lg"
-                    src={apartment.video_lock}
-                  />
-                </div>
-              )}
-            </div>
-          </section>
-        )}
-
-        {/* Карта */}
-        {apartment.map_embed_code && (
-          <section className="card p-6">
-            <h2 className="text-2xl font-heading font-semibold mb-4">
-              Расположение
-            </h2>
-            <div 
-              className="w-full h-96 rounded-lg overflow-hidden"
-              dangerouslySetInnerHTML={{ __html: apartment.map_embed_code }}
-            />
-          </section>
-        )}
-
-        {/* FAQ */}
-        <section className="card p-6">
-          <h2 className="text-2xl font-heading font-semibold mb-6">
-            Часто задаваемые вопросы
-          </h2>
-          <div className="space-y-6">
-            {apartment.faq_checkin && (
-              <div>
-                <h3 className="text-lg font-semibold mb-2 text-morent-navy">
-                  О заселении
-                </h3>
-                <p className="text-gray-700 whitespace-pre-line">{apartment.faq_checkin}</p>
-              </div>
-            )}
-            {apartment.faq_apartment && (
-              <div>
-                <h3 className="text-lg font-semibold mb-2 text-morent-navy">
-                  Об апартаментах
-                </h3>
-                <p className="text-gray-700 whitespace-pre-line">{apartment.faq_apartment}</p>
-              </div>
-            )}
-            {apartment.faq_area && (
-              <div>
-                <h3 className="text-lg font-semibold mb-2 text-morent-navy">
-                  О районе
-                </h3>
-                <p className="text-gray-700 whitespace-pre-line">{apartment.faq_area}</p>
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Контакты менеджера */}
-        <section className="card p-6">
-          <h2 className="text-2xl font-heading font-semibold mb-4">
-            Ваш менеджер
-          </h2>
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-morent-navy">
-              {apartment.manager_name}
-            </h3>
-            <div className="mt-2 space-y-1">
-              <p>
-                <span className="font-medium">Телефон:</span>{' '}
-                <a href={`tel:${apartment.manager_phone}`} className="text-morent-navy hover:underline">
-                  {apartment.manager_phone}
-                </a>
-              </p>
-              <p>
-                <span className="font-medium">Email:</span>{' '}
-                <a href={`mailto:${apartment.manager_email}`} className="text-morent-navy hover:underline">
-                  {apartment.manager_email}
-                </a>
-              </p>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      {/* Футер */}
-      <footer className="bg-morent-navy text-white py-8">
-        <div className="container-morent text-center">
-          <h3 className="text-2xl font-heading font-bold mb-2">MORENT</h3>
-          <p className="text-blue-100">Ваш дом у моря в любой момент</p>
-        </div>
-      </footer>
     </div>
-  );
+  </div>
+</div>
+</div>
+);
+}
+
+if (error) {
+return (
+<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+<div className="card-enhanced p-8 text-center animate-fade-in">
+  <h2 className="text-2xl font-bold mb-4 text-red-600">Ошибка</h2>
+  <p className="text-lg">{error}</p>
+</div>
+</div>
+);
+}
+
+if (!booking) return null;
+
+return (
+<div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 animate-fade-in">
+{/* Навигация */}
+<nav className="sticky top-0 z-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-md py-4 mb-8">
+<div className="container mx-auto flex justify-center gap-6">
+  <button
+    className={`tab-enhanced px-4 py-2 rounded-lg font-medium transition ${
+      activeSection === 'overview' ? 'bg-gradient-morent text-white' : ''
+    }`}
+    onClick={() => scrollToSection('overview')}
+  >
+    Инструкция
+  </button>
+  <button
+    className={`tab-enhanced px-4 py-2 rounded-lg font-medium transition ${
+      activeSection === 'gallery' ? 'bg-gradient-morent text-white' : ''
+    }`}
+    onClick={() => scrollToSection('gallery')}
+  >
+    Галерея
+  </button>
+  <button
+    className={`tab-enhanced px-4 py-2 rounded-lg font-medium transition ${
+      activeSection === 'faq' ? 'bg-gradient-morent text-white' : ''
+    }`}
+    onClick={() => scrollToSection('faq')}
+  >
+    FAQ
+  </button>
+  <button
+    className={`tab-enhanced px-4 py-2 rounded-lg font-medium transition ${
+      activeSection === 'contacts' ? 'bg-gradient-morent text-white' : ''
+    }`}
+    onClick={() => scrollToSection('contacts')}
+  >
+    Контакты
+  </button>
+</div>
+</nav>
+
+<div className="container mx-auto px-4 py-8 max-w-4xl">
+{/* Hero / Инструкция */}
+<section id="overview" className="mb-12 animate-fade-in">
+  <div className="card-enhanced p-8 mb-6">
+    <h1 className="text-3xl font-bold mb-4">Добро пожаловать, {booking.guest_name}!</h1>
+    <p className="text-lg mb-2">
+      Ваши апартаменты: <span className="font-semibold">{booking.apartment_title}</span>
+    </p>
+    <p className="mb-2">
+      Даты проживания: <b>{booking.date_start}</b> — <b>{booking.date_end}</b>
+    </p>
+    <div className="mt-4">
+      <div className="glass-dark p-4 rounded-xl mb-2">
+        <span className="font-semibold">Код доступа:</span>
+        <span className="ml-2 text-xl tracking-widest">{booking.lock_code}</span>
+      </div>
+      <div className="glass-dark p-4 rounded-xl">
+        <span className="font-semibold">WiFi:</span>
+        <span className="ml-2">{booking.wifi_name || '—'}</span>
+        <span className="ml-4 font-semibold">Пароль:</span>
+        <span className="ml-2">{booking.wifi_password || '—'}</span>
+      </div>
+    </div>
+  </div>
+  <div className="notification-info mb-6">
+    <b>Внимание:</b> Время заезда и подробная инструкция будут отправлены менеджером.
+  </div>
+</section>
+
+{/* Галерея */}
+<section id="gallery" className="mb-12 animate-fade-in">
+  <div className="card-enhanced p-6">
+    <h2 className="text-2xl font-bold mb-4">Галерея апартаментов</h2>
+    {/* Здесь можно реализовать интерактивную галерею, если есть фото */}
+    <div className="flex flex-wrap gap-4">
+      {/* Пример фото */}
+      <div className="w-40 h-32 bg-gray-200 rounded-xl skeleton"></div>
+      <div className="w-40 h-32 bg-gray-200 rounded-xl skeleton"></div>
+      <div className="w-40 h-32 bg-gray-200 rounded-xl skeleton"></div>
+    </div>
+    <div className="text-gray-500 mt-2">Фото будут доступны в ближайшее время.</div>
+  </div>
+</section>
+
+{/* FAQ */}
+<section id="faq" className="mb-12 animate-fade-in">
+  <div className="card-enhanced p-6">
+    <h2 className="text-2xl font-bold mb-4">Частые вопросы</h2>
+    <ul className="list-disc pl-6 space-y-2">
+      <li>Во сколько заезд и выезд?</li>
+      <li>Как пользоваться электронным замком?</li>
+      <li>Где найти ближайший магазин?</li>
+      <li>Куда обращаться по вопросам?</li>
+    </ul>
+    <div className="text-gray-500 mt-2">Если у вас остались вопросы — свяжитесь с менеджером!</div>
+  </div>
+</section>
+
+{/* Контакты */}
+<section id="contacts" className="mb-12 animate-fade-in">
+  <div className="card-enhanced p-6">
+    <h2 className="text-2xl font-bold mb-4">Контакты менеджера</h2>
+    <div className="flex flex-col gap-2">
+      <span>
+        <b>Телефон:</b> <a href={`tel:${booking.manager_phone}`} className="text-blue-600 underline">{booking.manager_phone}</a>
+      </span>
+      <span>
+        <b>WhatsApp:</b> <a href={`https://wa.me/${booking.manager_phone?.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-green-600 underline">Написать</a>
+      </span>
+      <span>
+        <b>Email:</b> <a href={`mailto:${booking.manager_email}`} className="text-indigo-600 underline">{booking.manager_email}</a>
+      </span>
+    </div>
+  </div>
+</section>
+</div>
+</div>
+);
 };
 
 export default BookingPage;
