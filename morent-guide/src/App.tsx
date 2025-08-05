@@ -7,48 +7,41 @@ function App() {
   console.log('App component loaded');
   
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
-      <div style={{ padding: '20px', textAlign: 'center' }}>
-        <h1 style={{ color: '#333', marginBottom: '20px' }}>Morent Guide</h1>
-        <p style={{ color: '#666' }}>Приложение загружается...</p>
-      </div>
-      
-      <Router>
-        <Routes>
-          {/* Главная страница перенаправляет на админку */}
-          <Route path="/" element={<Navigate to="/admin" replace />} />
-          
-          {/* Админ-панель менеджера */}
-          <Route path="/admin" element={<AdminPage />} />
-          
-          {/* Страница бронирования для гостей */}
-          <Route path="/booking/:slug" element={<BookingPage />} />
-          
-          {/* 404 - страница не найдена */}
-          <Route path="*" element={
-            <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ textAlign: 'center' }}>
-                <h1 style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '1rem' }}>404</h1>
-                <p style={{ color: '#666', marginBottom: '1.5rem' }}>Страница не найдена</p>
-                <a 
-                  href="/admin" 
-                  style={{ 
-                    backgroundColor: '#333', 
-                    color: 'white', 
-                    padding: '10px 20px', 
-                    textDecoration: 'none',
-                    borderRadius: '4px',
-                    display: 'inline-block'
-                  }}
-                >
-                  Перейти в админ-панель
-                </a>
-              </div>
+    <Router>
+      <Routes>
+        {/* Главная страница перенаправляет на админку */}
+        <Route path="/" element={<Navigate to="/admin" replace />} />
+        
+        {/* Админ-панель менеджера */}
+        <Route path="/admin" element={<AdminPage />} />
+        
+        {/* Страница бронирования для гостей */}
+        <Route path="/booking/:slug" element={<BookingPage />} />
+        
+        {/* 404 - страница не найдена */}
+        <Route path="*" element={
+          <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ textAlign: 'center' }}>
+              <h1 style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '1rem' }}>404</h1>
+              <p style={{ color: '#666', marginBottom: '1.5rem' }}>Страница не найдена</p>
+              <a 
+                href="/admin" 
+                style={{ 
+                  backgroundColor: '#333', 
+                  color: 'white', 
+                  padding: '10px 20px', 
+                  textDecoration: 'none',
+                  borderRadius: '4px',
+                  display: 'inline-block'
+                }}
+              >
+                Перейти в админ-панель
+              </a>
             </div>
-          } />
-        </Routes>
-      </Router>
-    </div>
+          </div>
+        } />
+      </Routes>
+    </Router>
   );
 }
 
