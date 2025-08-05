@@ -150,7 +150,7 @@ const ApartmentForm: React.FC<ApartmentFormProps> = ({
                 Фотографии апартамента
               </label>
               <MediaUploader
-                files={formData.photos || []}
+                files={Array.isArray(formData.photos) ? formData.photos : []}
                 onFilesChange={(files) => setFormData(prev => ({ ...prev, photos: files }))}
                 accept="image/*"
                 multiple

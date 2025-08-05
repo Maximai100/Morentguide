@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { uploadMultipleFiles, deleteFile, getFileUrl } from '../utils/directus-upload';
+import { uploadMultipleFiles, deleteFile } from '../utils/directus-upload';
 
 interface MediaUploaderProps {
   files: string[];

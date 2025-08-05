@@ -25,8 +25,8 @@ const BookingPage: React.FC = () => {
     const load = async () => {
       try {
         const data = await bookingApi.getBySlug(slug as string);
-        setBooking(data);
-      } catch (e) {
+        setBooking(data.booking);
+      } catch {
         setError('Бронирование не найдено');
       } finally {
         setLoading(false);
@@ -113,81 +113,105 @@ const BookingPage: React.FC = () => {
           <div className="card-enhanced p-8 mb-6">
             <h1 className="text-3xl font-bold mb-4">Добро пожаловать, {booking.guest_name}!</h1>
             <p className="text-lg mb-2">
-              Ваши апартаменты: <span className="font-semibold">{booking.apartment_title}</span>
+              Ваши апартаменты: <span className="font-semibold">{booking.apartment?.title || 'Апартаменты'}</span>
             </p>
             <p className="mb-2">
-              Даты проживания: <b>{booking.date_start}</b> — <b>{booking.date_end}</b>
+              Даты проживания: <b>{booking.checkin_date}</b> — <b>{booking.checkout_date}</b>
             </p>
             <div className="mt-4 space-y-2">
               <div className="glass-dark p-4 rounded-xl">
-                <b>Код доступа:</b> <span className="ml-2 text-xl tracking-widest">{booking.lock_code}</span>
+                <b>Код доступа:</b> <span className="ml-2 text-xl tracking-widest">{booking.apartment?.code_lock || 'Не указан'}</span>
               </div>
               <div className="glass-dark p-4 rounded-xl">
-                <b>WiFi:</b> <span className="ml-2">{booking.wifi_name || '—'}</span>
-                <b className="ml-4">Пароль:</b> <span className="ml-2">{booking.wifi_password || '—'}</span>
+                <b>Wi-Fi:</b> <span className="ml-2">{booking.apartment?.wifi_name || 'Не указано'}</span>
+                <br />
+                <b>Пароль:</b> <span className="ml-2">{booking.apartment?.wifi_password || 'Не указан'}</span>
               </div>
             </div>
           </div>
-          <div className="notification-info mb-6">
-            <b>Внимание:</b> Время заезда и подробная инструкция будут отправлены менеджером.
+
+          {/* Инструкции */}
+          <div className="card-enhanced p-8">
+            <h2 className="text-2xl font-bold mb-6">Инструкции</h2>
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Заселение</h3>
+                <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: booking.apartment?.faq_checkin || 'Инструкции не указаны' }} />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Апартаменты</h3>
+                <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: booking.apartment?.faq_apartment || 'Инструкции не указаны' }} />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Район</h3>
+                <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: booking.apartment?.faq_area || 'Инструкции не указаны' }} />
+              </div>
+            </div>
           </div>
         </section>
 
         {/* === GALLERY === */}
         <section id="gallery" ref={refs.gallery} className="mb-12 animate-fade-in">
-          <div className="card-enhanced p-6">
-            <h2 className="text-2xl font-bold mb-4">Галерея апартаментов</h2>
-            <div className="flex flex-wrap gap-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="w-40 h-32 bg-gray-200 rounded-xl skeleton"></div>
-              ))}
-            </div>
-            <p className="text-gray-500 mt-2">Фото будут доступны в ближайшее время.</p>
+          <div className="card-enhanced p-8">
+            <h2 className="text-2xl font-bold mb-6">Галерея</h2>
+            {booking.apartment?.photos && Array.isArray(booking.apartment.photos) && booking.apartment.photos.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {booking.apartment.photos.map((photo, index) => (
+                  <div key={index} className="aspect-square rounded-lg overflow-hidden">
+                    <img src={photo} alt={`Фото ${index + 1}`} className="w-full h-full object-cover" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500">Фотографии не загружены</p>
+            )}
           </div>
         </section>
 
         {/* === FAQ === */}
         <section id="faq" ref={refs.faq} className="mb-12 animate-fade-in">
-          <div className="card-enhanced p-6">
-            <h2 className="text-2xl font-bold mb-4">Частые вопросы</h2>
-            <ul className="list-disc pl-6 space-y-2">
-              <li>Во сколько заезд и выезд?</li>
-              <li>Как пользоваться электронным замком?</li>
-              <li>Где найти ближайший магазин?</li>
-              <li>Куда обращаться по вопросам?</li>
-            </ul>
-            <p className="text-gray-500 mt-2">Если у вас остались вопросы — свяжитесь с менеджером!</p>
+          <div className="card-enhanced p-8">
+            <h2 className="text-2xl font-bold mb-6">Часто задаваемые вопросы</h2>
+            <div className="space-y-4">
+              <div className="border-b pb-4">
+                <h3 className="font-semibold mb-2">Как добраться до апартаментов?</h3>
+                <p className="text-gray-600">Подробная информация указана в разделе "Инструкции" выше.</p>
+              </div>
+              <div className="border-b pb-4">
+                <h3 className="font-semibold mb-2">Что делать при проблемах?</h3>
+                <p className="text-gray-600">Свяжитесь с менеджером по контактам ниже.</p>
+              </div>
+            </div>
           </div>
         </section>
 
         {/* === CONTACTS === */}
         <section id="contacts" ref={refs.contacts} className="mb-12 animate-fade-in">
-          <div className="card-enhanced p-6">
-            <h2 className="text-2xl font-bold mb-4">Контакты менеджера</h2>
-            <div className="flex flex-col gap-2">
-              <span>
-                <b>Телефон:</b>{' '}
-                <a href={`tel:${booking.manager_phone}`} className="text-blue-600 underline">
-                  {booking.manager_phone}
-                </a>
-              </span>
-              <span>
-                <b>WhatsApp:</b>{' '}
-                <a
-                  href={`https://wa.me/${booking.manager_phone?.replace(/\D/g, '')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-green-600 underline"
-                >
-                  Написать
-                </a>
-              </span>
-              <span>
-                <b>Email:</b>{' '}
-                <a href={`mailto:${booking.manager_email}`} className="text-indigo-600 underline">
-                  {booking.manager_email}
-                </a>
-              </span>
+          <div className="card-enhanced p-8">
+            <h2 className="text-2xl font-bold mb-6">Контакты</h2>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-morent rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold">📞</span>
+                </div>
+                <div>
+                  <p className="font-semibold">Телефон менеджера</p>
+                  <a href={`tel:${booking.apartment?.manager_phone || ''}`} className="text-blue-600 hover:underline">
+                    {booking.apartment?.manager_phone || 'Не указан'}
+                  </a>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-morent rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold">📧</span>
+                </div>
+                <div>
+                  <p className="font-semibold">Email менеджера</p>
+                  <a href={`mailto:${booking.apartment?.manager_email || ''}`} className="text-blue-600 hover:underline">
+                    {booking.apartment?.manager_email || 'Не указан'}
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </section>
