@@ -2,12 +2,13 @@ import type { Apartment, Booking, BookingPageData } from '../types';
 import { demoApartments, demoBookings } from './demo-data';
 
 // Полностью отключаем API для избежания Mixed Content ошибок
+console.log('🚀 НОВАЯ ВЕРСИЯ API ЗАГРУЖЕНА - ТОЛЬКО ДЕМО-ДАННЫЕ');
 console.log('API отключен - используем только демо-данные');
 
 // API для работы с апартаментами (только демо-данные)
 export const apartmentApi = {
   getAll: async (): Promise<Apartment[]> => {
-    console.log('Загружаем демо-апартаменты...');
+    console.log('✅ Загружаем демо-апартаменты...');
     return demoApartments;
   },
   
