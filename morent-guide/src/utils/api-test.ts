@@ -1,50 +1,49 @@
 // Утилита для тестирования API через прокси Vercel
 // Тестирует подключение к Directus через /api прокси
 
-import { apartmentApi, bookingApi } from './api';
+import { api } from './api';
 
-export const testProxyConnection = async () => {
-  console.log('🔄 Тестирование API через прокси Vercel...');
+export const testDirectusAPI = async () => {
+  console.log('🧪 Тестирование Directus API...');
   
   try {
-    // Тест 1: Получение списка апартаментов
-    console.log('📋 Тест 1: Получение списка апартаментов...');
-    const apartments = await apartmentApi.getAll();
-    console.log('✅ Апартаменты:', apartments.length, 'записей');
+    // Тест 1: Проверка подключения к апартаментам
+    console.log('1. Тестируем подключение к апартаментам...');
+    const apartmentsResponse = await api.get('/items/apartments');
+    console.log('✅ Апартаменты доступны:', apartmentsResponse.data.data?.length || 0, 'записей');
     
-    // Тест 2: Получение списка бронирований
-    console.log('📋 Тест 2: Получение списка бронирований...');
-    const bookings = await bookingApi.getAll();
-    console.log('✅ Бронирования:', bookings.length, 'записей');
+    // Тест 2: Проверка подключения к бронированиям
+    console.log('2. Тестируем подключение к бронированиям...');
+    const bookingsResponse = await api.get('/items/bookings');
+    console.log('✅ Бронирования доступны:', bookingsResponse.data.data?.length || 0, 'записей');
     
-    // Тест 3: Поиск бронирования по slug (если есть)
-    if (bookings.length > 0 && bookings[0].slug) {
-      console.log('📋 Тест 3: Получение бронирования по slug...');
-      const bookingData = await bookingApi.getBySlug(bookings[0].slug);
-      console.log('✅ Данные бронирования по slug:', bookingData);
+    // Тест 3: Проверка прав на файлы
+    console.log('3. Тестируем права на файлы...');
+    const filesResponse = await api.get('/files');
+    console.log('✅ Файлы доступны:', filesResponse.data.data?.length || 0, 'файлов');
+    
+    console.log('🎉 Все тесты прошли успешно! API работает корректно.');
+    return true;
+  } catch (error) {
+    console.error('❌ Ошибка при тестировании API:', error);
+    
+    if (error && typeof error === 'object' && 'response' in error) {
+      const axiosError = error as any;
+      console.error('Статус:', axiosError.response?.status);
+      console.error('Данные:', axiosError.response?.data);
     }
     
-    console.log('🎉 Все тесты прокси пройдены успешно!');
-    return true;
-    
-  } catch (error) {
-    console.error('❌ Ошибка в прокси API:', error);
     return false;
   }
 };
 
-// Функция для тестирования через консоль браузера
-export const runApiTest = () => {
-  testProxyConnection().then(success => {
+// Автоматический тест при загрузке в development режиме
+if (import.meta.env.DEV) {
+  testDirectusAPI().then(success => {
     if (success) {
-      console.log('✅ Прокси API работает корректно');
+      console.log('🚀 API готов к работе!');
     } else {
-      console.log('❌ Проблемы с прокси API');
+      console.log('⚠️ Проверьте настройки токена в .env файле');
     }
   });
-};
-
-// Экспорт для использования в консоли браузера
-if (typeof window !== 'undefined') {
-  (window as unknown as { testDirectusAPI: typeof runApiTest }).testDirectusAPI = runApiTest;
 }

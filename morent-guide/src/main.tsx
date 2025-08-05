@@ -27,8 +27,8 @@ if (!rootElement) {
 
 // Импорт API тестера в development режиме
 if (import.meta.env.DEV) {
-  import('./utils/api-test').then(({ runApiTest }) => {
-    (window as any).testDirectusAPI = runApiTest;
+  import('./utils/api-test').then(({ testDirectusAPI }) => {
+    (window as any).testDirectusAPI = testDirectusAPI;
     console.log('🔧 Development mode: используйте testDirectusAPI() в консоли для тестирования API');
   }).catch(err => {
     console.error('Error loading api-test:', err);
