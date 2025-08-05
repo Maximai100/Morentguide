@@ -5,6 +5,7 @@ import ApartmentForm from '../components/ApartmentForm';
 import ApartmentsList from '../components/ApartmentsList';
 import BookingForm from '../components/BookingForm';
 import BookingsList from '../components/BookingsList';
+import ThemeToggle from '../components/ThemeToggle';
 
 type ViewMode = 'list' | 'create' | 'edit';
 
@@ -25,12 +26,29 @@ const AdminPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Заголовок */}
-      <header className="bg-morent-navy text-white shadow-lg">
-        <div className="container-morent py-6">
-          <h1 className="text-3xl font-heading font-bold">
-            MORENT
-          </h1>
-          <p className="text-blue-100 mt-2">Панель управления</p>
+      <header className="bg-gradient-morent text-white shadow-2xl">
+        <div className="container-morent py-8">
+          <div className="flex items-center justify-between">
+            <div className="glass-effect rounded-2xl p-6 inline-block animate-fade-in">
+              <h1 className="text-4xl font-heading font-bold mb-2">
+                MORENT
+              </h1>
+              <p className="text-blue-100">Панель управления</p>
+            </div>
+            
+            {/* Добавьте эту секцию */}
+            <div className="flex items-center space-x-4">
+              <ThemeToggle />
+              <div className="glass-effect rounded-xl p-3">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 bg-morent-coral rounded-full flex items-center justify-center">
+                    <span className="text-white font-bold text-sm">A</span>
+                  </div>
+                  <span className="text-white font-medium">Админ</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </header>
 
