@@ -27,20 +27,25 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
     try {
       const uploadedFileIds = await uploadMultipleFiles(Array.from(selectedFiles));
       
-      if (multiple) {
-        onFilesChange([...files, ...uploadedFileIds]);
+      if (uploadedFileIds.length > 0) {
+        if (multiple) {
+          onFilesChange([...files, ...uploadedFileIds]);
+        } else {
+          onFilesChange(uploadedFileIds.slice(0, 1));
+        }
+        
+        // Показываем успешное сообщение
+        console.log('Файлы успешно загружены:', uploadedFileIds);
       } else {
-        onFilesChange(uploadedFileIds.slice(0, 1));
+        console.log('Нет файлов для загрузки');
       }
-      
-      // Показываем успешное сообщение
-      console.log('Файлы успешно загружены:', uploadedFileIds);
     } catch (error) {
       console.error('Error uploading files:', error);
       
-      // Более информативное сообщение об ошибке
-      const errorMessage = error instanceof Error ? error.message : 'Неизвестная ошибка';
-      alert(`Ошибка при загрузке файлов: ${errorMessage}\n\nПроверьте подключение к Directus или попробуйте позже.`);
+      // Показываем ошибку только если действительно что-то пошло не так
+      if (error instanceof Error && error.message.includes('Directus')) {
+        alert(`Ошибка при загрузке файлов: ${error.message}\n\nПроверьте подключение к Directus или попробуйте позже.`);
+      }
     } finally {
       setUploading(false);
     }

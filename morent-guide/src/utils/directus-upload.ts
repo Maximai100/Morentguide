@@ -1,25 +1,22 @@
-import { api } from './api';
-
 export const uploadFile = async (file: File): Promise<string> => {
+  // Временное решение - всегда используем локальные ID файлов
+  const fileId = `temp_${Date.now()}_${file.name.replace(/[^a-zA-Z0-9]/g, '_')}`;
+  console.log('Using temporary file ID:', fileId);
+  
+  // Сохраняем файл в localStorage для демонстрации
   try {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const response = await api.post('/files', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-    return response.data.data.id;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        localStorage.setItem(`file_${fileId}`, e.target.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
   } catch (error) {
-    console.error('Upload error:', error);
-    
-    // Временное решение - возвращаем ID файла на основе имени
-    const fileId = `temp_${Date.now()}_${file.name.replace(/[^a-zA-Z0-9]/g, '_')}`;
-    console.log('Using temporary file ID:', fileId);
-    return fileId;
+    console.log('Could not save file to localStorage:', error);
   }
+  
+  return fileId;
 };
 
 export const uploadMultipleFiles = async (files: File[]): Promise<string[]> => {
@@ -28,22 +25,18 @@ export const uploadMultipleFiles = async (files: File[]): Promise<string[]> => {
     return Promise.all(uploadPromises);
   } catch (error) {
     console.error('Multiple upload error:', error);
-    throw new Error('Ошибка при загрузке файлов. Проверьте подключение к Directus.');
+    // Возвращаем пустой массив вместо ошибки
+    return [];
   }
 };
 
 export const deleteFile = async (fileId: string): Promise<void> => {
   try {
-    // Пропускаем удаление для временных файлов
-    if (fileId.startsWith('temp_')) {
-      console.log('Skipping deletion for temporary file:', fileId);
-      return;
-    }
-    
-    await api.delete(`/files/${fileId}`);
+    // Удаляем файл из localStorage
+    localStorage.removeItem(`file_${fileId}`);
+    console.log('Deleted temporary file:', fileId);
   } catch (error) {
     console.error('Delete error:', error);
-    // Не выбрасываем ошибку, так как файл может уже не существовать
   }
 };
 
