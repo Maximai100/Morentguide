@@ -2,12 +2,12 @@ import axios from 'axios';
 import type { Apartment, Booking, BookingPageData } from '../types';
 import { demoApartments, demoBookings } from './demo-data';
 
+// Временно отключаем API для избежания Mixed Content ошибок
+const USE_DEMO_DATA = true; // Принудительно используем демо-данные
+
 // Directus API Configuration - используем HTTPS
 const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL || 'https://89.169.45.238:8055';
 const API_BASE_URL = `${DIRECTUS_URL}/items`;
-
-// Альтернативный API через прокси (если основной недоступен)
-const FALLBACK_API_URL = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(DIRECTUS_URL);
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -25,37 +25,31 @@ if (token) {
 
 // Функция для проверки доступности API
 const checkApiHealth = async (): Promise<boolean> => {
+  // Принудительно возвращаем false для использования демо-данных
+  if (USE_DEMO_DATA) {
+    console.log('Используем демо-данные (API отключен)');
+    return false;
+  }
+  
   try {
-    // Сначала пробуем основной API
     await api.get('/apartments?limit=1');
     return true;
   } catch (error) {
-    console.warn('Основной API недоступен:', error);
-    
-    // Проверяем, является ли ошибка связанной с CORS или Mixed Content
-    if (error instanceof Error) {
-      const errorMessage = error.message.toLowerCase();
-      if (errorMessage.includes('cors') || errorMessage.includes('mixed content') || errorMessage.includes('blocked')) {
-        console.warn('Ошибка CORS или Mixed Content - используем демо-данные');
-        return false;
-      }
-    }
-    
-    // Пробуем через прокси
-    try {
-      const proxyResponse = await axios.get(FALLBACK_API_URL + '/items/apartments?limit=1');
-      console.log('API доступен через прокси');
-      return true;
-    } catch (proxyError) {
-      console.warn('API недоступен даже через прокси:', proxyError);
-      return false;
-    }
+    console.warn('API недоступен:', error);
+    return false;
   }
 };
 
 // API для работы с апартаментами (Directus)
 export const apartmentApi = {
   getAll: async (): Promise<Apartment[]> => {
+    console.log('Загружаем апартаменты...');
+    
+    if (USE_DEMO_DATA) {
+      console.log('Возвращаем демо-данные апартаментов');
+      return demoApartments;
+    }
+    
     try {
       const isApiAvailable = await checkApiHealth();
       if (!isApiAvailable) {
@@ -110,6 +104,13 @@ export const apartmentApi = {
 // API для работы с бронированиями (Directus)
 export const bookingApi = {
   getAll: async (): Promise<Booking[]> => {
+    console.log('Загружаем бронирования...');
+    
+    if (USE_DEMO_DATA) {
+      console.log('Возвращаем демо-данные бронирований');
+      return demoBookings;
+    }
+    
     try {
       const isApiAvailable = await checkApiHealth();
       if (!isApiAvailable) {
