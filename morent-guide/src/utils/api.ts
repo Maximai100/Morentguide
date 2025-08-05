@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { Apartment, Booking, BookingPageData } from '../types';
+import { demoApartments, demoBookings } from './demo-data';
 
 // Directus API Configuration
 const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL || 'http://89.169.45.238:8055';
@@ -10,6 +11,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 10000, // 10 секунд таймаут
 });
 
 // Добавляем токен авторизации если есть
@@ -18,10 +20,33 @@ if (token) {
   api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 }
 
+// Функция для проверки доступности API
+const checkApiHealth = async (): Promise<boolean> => {
+  try {
+    await api.get('/apartments?limit=1');
+    return true;
+  } catch (error) {
+    console.warn('API недоступен:', error);
+    return false;
+  }
+};
+
 // API для работы с апартаментами (Directus)
 export const apartmentApi = {
-  getAll: (): Promise<Apartment[]> => 
-    api.get('/apartments').then(response => response.data.data || []),
+  getAll: async (): Promise<Apartment[]> => {
+    try {
+      const isApiAvailable = await checkApiHealth();
+      if (!isApiAvailable) {
+        console.warn('API недоступен, возвращаем демо-данные');
+        return demoApartments;
+      }
+      const response = await api.get('/apartments');
+      return response.data.data || [];
+    } catch (error) {
+      console.error('Ошибка при загрузке апартаментов:', error);
+      return demoApartments;
+    }
+  },
   
   getById: (id: string): Promise<Apartment> => 
     api.get(`/apartments/${id}`).then(response => response.data.data),
@@ -62,8 +87,20 @@ export const apartmentApi = {
 
 // API для работы с бронированиями (Directus)
 export const bookingApi = {
-  getAll: (): Promise<Booking[]> => 
-    api.get('/bookings?fields=*,apartment_id.*').then(response => response.data.data || []),
+  getAll: async (): Promise<Booking[]> => {
+    try {
+      const isApiAvailable = await checkApiHealth();
+      if (!isApiAvailable) {
+        console.warn('API недоступен, возвращаем демо-данные бронирований');
+        return demoBookings;
+      }
+      const response = await api.get('/bookings?fields=*,apartment_id.*');
+      return response.data.data || [];
+    } catch (error) {
+      console.error('Ошибка при загрузке бронирований:', error);
+      return demoBookings;
+    }
+  },
   
   getById: (id: string): Promise<Booking> => 
     api.get(`/bookings/${id}?fields=*,apartment_id.*`).then(response => response.data.data),
