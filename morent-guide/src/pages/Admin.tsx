@@ -24,7 +24,7 @@ const AdminPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Заголовок */}
       <header className="bg-gradient-morent text-white shadow-2xl">
         <div className="container-morent py-8">
@@ -36,7 +36,6 @@ const AdminPage: React.FC = () => {
               <p className="text-blue-100">Панель управления</p>
             </div>
             
-            {/* Добавьте эту секцию */}
             <div className="flex items-center space-x-4">
               <ThemeToggle />
               <div className="glass-effect rounded-xl p-3">
@@ -53,7 +52,7 @@ const AdminPage: React.FC = () => {
       </header>
 
       {/* Навигация */}
-      <nav className="bg-white border-b border-gray-200">
+      <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="container-morent">
           <div className="flex space-x-8">
             <button
@@ -62,13 +61,9 @@ const AdminPage: React.FC = () => {
                 setViewMode('list');
                 setEditingApartment(undefined);
               }}
-              className={`py-4 px-2 border-b-2 font-medium text-sm ${
-                activeTab === 'apartments'
-                  ? 'border-morent-navy text-morent-navy'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
+              className={`tab-enhanced ${activeTab === 'apartments' ? 'active' : ''}`}
             >
-              Апартаменты
+              🏠 Апартаменты
             </button>
             <button
               onClick={() => {
@@ -76,13 +71,9 @@ const AdminPage: React.FC = () => {
                 setViewMode('list');
                 setEditingBooking(undefined);
               }}
-              className={`py-4 px-2 border-b-2 font-medium text-sm ${
-                activeTab === 'bookings'
-                  ? 'border-morent-navy text-morent-navy'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
+              className={`tab-enhanced ${activeTab === 'bookings' ? 'active' : ''}`}
             >
-              Бронирования
+              📅 Бронирования
             </button>
           </div>
         </div>
@@ -93,80 +84,38 @@ const AdminPage: React.FC = () => {
         {activeTab === 'apartments' && (
           <div className="space-y-6">
             {viewMode === 'list' && (
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-heading font-semibold text-gray-900">
-                  Апартаменты
-                </h2>
-                <button 
-                  onClick={() => setViewMode('create')}
-                  className="btn-primary"
-                >
-                  Добавить апартамент
-                </button>
-              </div>
-            )}
-
-            {(viewMode === 'create' || viewMode === 'edit') && activeTab === 'apartments' && (
-              <div className="mb-6">
-                <nav className="flex" aria-label="Breadcrumb">
-                  <ol className="flex items-center space-x-4">
-                    <li>
-                      <button
-                        onClick={() => setViewMode('list')}
-                        className="text-gray-500 hover:text-gray-700"
-                      >
-                        Апартаменты
-                      </button>
-                    </li>
-                    <li>
-                      <div className="flex items-center">
-                        <svg className="flex-shrink-0 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                        </svg>
-                        <span className="ml-4 text-sm font-medium text-gray-500">
-                          {viewMode === 'create' ? 'Добавить апартамент' : 'Редактировать апартамент'}
-                        </span>
-                      </div>
-                    </li>
-                  </ol>
-                </nav>
-              </div>
-            )}
-
-            {viewMode === 'list' && activeTab === 'apartments' && (
               <ApartmentsList
-                onEdit={(apartment) => {
-                  setEditingApartment(apartment);
+                onEdit={apt => {
+                  setEditingApartment(apt);
                   setViewMode('edit');
                 }}
-                onRefresh={() => setRefreshTrigger(prev => prev + 1)}
+                onRefresh={() => setRefreshTrigger(x => x + 1)}
                 refreshTrigger={refreshTrigger}
               />
             )}
-
-            {(viewMode === 'create' || viewMode === 'edit') && activeTab === 'apartments' && (
+            {viewMode === 'create' && (
+              <ApartmentForm
+                onSave={async (apt) => {
+                  setIsLoading(true);
+                  await apartmentApi.create(apt as Apartment);
+                  setIsLoading(false);
+                  setViewMode('list');
+                  setRefreshTrigger(x => x + 1);
+                }}
+                onCancel={handleCancel}
+                isLoading={isLoading}
+              />
+            )}
+            {viewMode === 'edit' && editingApartment && (
               <ApartmentForm
                 apartment={editingApartment}
-                onSave={async (apartmentData) => {
+                onSave={async (apt) => {
                   setIsLoading(true);
-                  try {
-                    if (editingApartment) {
-                      await apartmentApi.update(editingApartment.id, apartmentData);
-                    } else {
-                      await apartmentApi.create(apartmentData);
-                    }
-                    setViewMode('list');
-                    setEditingApartment(undefined);
-                    setRefreshTrigger(prev => prev + 1);
-                  } catch (error) {
-                    console.error('Error saving apartment:', error);
-                    const errorMessage = error instanceof Error 
-                      ? (error as any).response?.data?.message || error.message || 'Неизвестная ошибка'
-                      : 'Неизвестная ошибка';
-                    alert(`Ошибка при сохранении апартамента: ${errorMessage}`);
-                  } finally {
-                    setIsLoading(false);
-                  }
+                  await apartmentApi.update(apt as Apartment);
+                  setIsLoading(false);
+                  setViewMode('list');
+                  setEditingApartment(undefined);
+                  setRefreshTrigger(x => x + 1);
                 }}
                 onCancel={handleCancel}
                 isLoading={isLoading}
@@ -174,90 +123,43 @@ const AdminPage: React.FC = () => {
             )}
           </div>
         )}
-
         {activeTab === 'bookings' && (
           <div className="space-y-6">
             {viewMode === 'list' && (
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-heading font-semibold text-gray-900">
-                  Бронирования
-                </h2>
-                <button 
-                  onClick={() => setViewMode('create')}
-                  className="btn-primary"
-                >
-                  Создать бронирование
-                </button>
-              </div>
-            )}
-
-            {(viewMode === 'create' || viewMode === 'edit') && activeTab === 'bookings' && (
-              <div className="mb-6">
-                <nav className="flex" aria-label="Breadcrumb">
-                  <ol className="flex items-center space-x-4">
-                    <li>
-                      <button
-                        onClick={() => setViewMode('list')}
-                        className="text-gray-500 hover:text-gray-700"
-                      >
-                        Бронирования
-                      </button>
-                    </li>
-                    <li>
-                      <div className="flex items-center">
-                        <svg className="flex-shrink-0 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                        </svg>
-                        <span className="ml-4 text-sm font-medium text-gray-500">
-                          {viewMode === 'create' ? 'Создать бронирование' : 'Редактировать бронирование'}
-                        </span>
-                      </div>
-                    </li>
-                  </ol>
-                </nav>
-              </div>
-            )}
-
-            {viewMode === 'list' && activeTab === 'bookings' && (
               <BookingsList
-                onEdit={(booking) => {
+                onEdit={booking => {
                   setEditingBooking(booking);
                   setViewMode('edit');
                 }}
-                onRefresh={() => setRefreshTrigger(prev => prev + 1)}
+                onRefresh={() => setRefreshTrigger(x => x + 1)}
                 refreshTrigger={refreshTrigger}
               />
             )}
-
-            {(viewMode === 'create' || viewMode === 'edit') && activeTab === 'bookings' && (
+            {viewMode === 'create' && (
+              <BookingForm
+                onSave={async (booking) => {
+                  setIsLoading(true);
+                  await bookingApi.create(booking as Booking);
+                  setIsLoading(false);
+                  setViewMode('list');
+                  setRefreshTrigger(x => x + 1);
+                }}
+                onCancel={handleCancel}
+                isLoading={isLoading}
+              />
+            )}
+            {viewMode === 'edit' && editingBooking && (
               <BookingForm
                 booking={editingBooking}
-                onSave={async (bookingData) => {
+                onSave={async (booking) => {
                   setIsLoading(true);
-                  try {
-                    console.log('Admin: Saving booking data:', bookingData);
-                    if (editingBooking) {
-                      console.log('Admin: Updating existing booking');
-                      await bookingApi.update(editingBooking.id, bookingData);
-                    } else {
-                      console.log('Admin: Creating new booking');
-                      await bookingApi.create(bookingData);
-                    }
-                    console.log('Admin: Booking saved successfully');
-                    setViewMode('list');
-                    setEditingBooking(undefined);
-                    setRefreshTrigger(prev => prev + 1);
-                  } catch (error) {
-                    console.error('Error saving booking:', error);
-                    alert(`Ошибка при сохранении бронирования: ${error instanceof Error ? error.message : String(error)}`);
-                  } finally {
-                    setIsLoading(false);
-                  }
-                }}
-                onCancel={() => {
+                  await bookingApi.update(booking as Booking);
+                  setIsLoading(false);
                   setViewMode('list');
                   setEditingBooking(undefined);
+                  setRefreshTrigger(x => x + 1);
                 }}
+                onCancel={handleCancel}
                 isLoading={isLoading}
               />
             )}
@@ -268,4 +170,4 @@ const AdminPage: React.FC = () => {
   );
 };
 
-export default AdminPage; 
+export default AdminPage;
