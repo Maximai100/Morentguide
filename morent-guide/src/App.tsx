@@ -4,7 +4,7 @@ import BookingPage from './pages/Booking';
 
 function App() {
   return (
-    <Router basename="/morent-guide">
+    <Router>
       <Routes>
         {/* Главная страница перенаправляет на админку */}
         <Route path="/" element={<Navigate to="/admin" replace />} />
