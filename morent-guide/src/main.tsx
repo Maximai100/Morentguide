@@ -2,6 +2,9 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
+import { FORCE_UPDATE_VERSION } from './utils/force-update.ts'
+
+console.log('App started with version:', FORCE_UPDATE_VERSION)
 
 // Импорт API тестера в development режиме
 if (import.meta.env.DEV) {
