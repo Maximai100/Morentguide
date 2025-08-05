@@ -1,0 +1,16 @@
+# Documentation files
+*.md
+tasks/
+.github/
+
+# Environment files
+.env*
+!.env.example
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db 
