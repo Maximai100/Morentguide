@@ -32,9 +32,15 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
       } else {
         onFilesChange(uploadedFileIds.slice(0, 1));
       }
+      
+      // Показываем успешное сообщение
+      console.log('Файлы успешно загружены:', uploadedFileIds);
     } catch (error) {
       console.error('Error uploading files:', error);
-      alert('Ошибка при загрузке файлов. Проверьте подключение к Directus.');
+      
+      // Более информативное сообщение об ошибке
+      const errorMessage = error instanceof Error ? error.message : 'Неизвестная ошибка';
+      alert(`Ошибка при загрузке файлов: ${errorMessage}\n\nПроверьте подключение к Directus или попробуйте позже.`);
     } finally {
       setUploading(false);
     }
