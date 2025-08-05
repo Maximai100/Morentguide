@@ -1,7 +1,8 @@
 {
-  "buildCommand": "cd morent-guide && npm run build",
+  "buildCommand": "cd morent-guide && npm install && npm run build",
   "outputDirectory": "morent-guide/dist",
-  "functions": {},
+  "installCommand": "cd morent-guide && npm install",
+  "framework": "vite",
   "rewrites": [
     {
       "source": "/(.*)",
