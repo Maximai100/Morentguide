@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Простые минималистичные стили */
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 font-body;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}
+
+/* Стили для логотипа MORENT */
+.logo-morent {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.logo-line {
+  width: 6rem;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.6) 20%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0.6) 80%, transparent 100%);
+  border-radius: 1px;
+  margin: 0.5rem 0;
+}
+
+@layer components {
+  /* Простые кнопки */
+  .btn-primary {
+    @apply bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded transition-colors;
+  }
+  
+  .btn-secondary {
+    @apply bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 px-4 py-2 rounded transition-colors;
+  }
+  
+  .btn-danger {
+    @apply bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition-colors;
+  }
+  
+  /* Простые поля ввода */
+  .input-simple {
+    @apply w-full px-3 py-2 border border-gray-300 rounded 
+           focus:border-gray-500 focus:outline-none
+           bg-white text-gray-900;
+  }
+  
+  /* Простые карточки */
+  .card-simple {
+    @apply bg-white rounded border border-gray-200 shadow-sm;
+  }
+  
+  /* Контейнер */
+  .container-simple {
+    @apply max-w-7xl mx-auto px-4;
+  }
+}
+
+/* Простые табы */
+.tab-simple {
+  @apply px-4 py-2 font-medium text-gray-600 hover:text-gray-900 transition-colors;
+}
+
+.tab-simple.active {
+  @apply text-gray-900 border-b-2 border-gray-900;
+}
+
+/* Убираем все сложные стили */
+* {
+  animation: none !important;
+  transition: color 0.2s, background-color 0.2s, border-color 0.2s !important;
+}
+
+/* Простой фокус */
+*:focus {
+  @apply outline-none ring-2 ring-gray-400 ring-offset-2;
+}
+
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  @apply outline-none ring-2 ring-gray-400 ring-offset-2;
+}
