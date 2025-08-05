@@ -1,93 +1,93 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { uploadMultipleFiles, deleteFile, getFileUrl } from '../utils/directus-upload';
 
 interface MediaUploaderProps {
-  label: string;
-  value: string | null;
-  onChange: (value: string | null) => void;
+  files: string[];
+  onFilesChange: (files: string[]) => void;
   accept?: string;
+  multiple?: boolean;
+  label?: string;
 }
 
-const MediaUploader: React.FC<MediaUploaderProps> = ({ 
-  label, 
-  value, 
-  onChange, 
-  accept = "*" 
+const MediaUploader: React.FC<MediaUploaderProps> = ({
+  files,
+  onFilesChange,
+  accept = 'image/*',
+  multiple = true,
+  label = 'Выбрать файл'
 }) => {
-  const [isUploading, setIsUploading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = e.target.files;
+    if (!selectedFiles || selectedFiles.length === 0) return;
 
-    setIsUploading(true);
-    
+    setUploading(true);
     try {
-      // Здесь будет логика загрузки файла в Directus
-      // Пока что просто симулируем загрузку
-      console.log('Uploading file:', file.name);
+      const uploadedFileIds = await uploadMultipleFiles(Array.from(selectedFiles));
       
-      // Симуляция загрузки
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Генерируем fake ID файла
-      const fakeFileId = `file_${Date.now()}`;
-      onChange(fakeFileId);
-      
+      if (multiple) {
+        onFilesChange([...files, ...uploadedFileIds]);
+      } else {
+        onFilesChange(uploadedFileIds.slice(0, 1));
+      }
     } catch (error) {
-      console.error('Upload error:', error);
-      alert('Ошибка при загрузке файла');
+      console.error('Error uploading files:', error);
+      alert('Ошибка при загрузке файлов');
     } finally {
-      setIsUploading(false);
+      setUploading(false);
     }
   };
 
-  const handleRemove = () => {
-    onChange(null);
+  const handleRemove = async (fileId: string) => {
+    try {
+      await deleteFile(fileId);
+      onFilesChange(files.filter(f => f !== fileId));
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      alert('Ошибка при удалении файла');
+    }
   };
 
   return (
     <div className="space-y-2">
-      <label className="form-label">
-        {label}
-      </label>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept={accept}
+        multiple={multiple}
+        onChange={handleFileSelect}
+        className="hidden"
+      />
       
-      <div className="flex items-center space-x-4">
-        <input
-          type="file"
-          accept={accept}
-          onChange={handleFileChange}
-          className="hidden"
-          id={`file-${label}`}
-          disabled={isUploading}
-        />
-        
-        <label
-          htmlFor={`file-${label}`}
-          className="btn-secondary cursor-pointer"
-          style={{ pointerEvents: isUploading ? 'none' : 'auto' }}
-        >
-          {isUploading ? 'Загрузка...' : 'Выбрать файл'}
-        </label>
-        
-        {value && (
-          <button
-            type="button"
-            onClick={handleRemove}
-            className="text-red-600 hover:text-red-800 text-sm"
-            disabled={isUploading}
-          >
-            Удалить
-          </button>
-        )}
-      </div>
-      
-      {value && (
-        <div className="text-sm text-gray-600">
-          Файл загружен: {value}
+      <button
+        type="button"
+        onClick={() => fileInputRef.current?.click()}
+        disabled={uploading}
+        className="btn-secondary"
+      >
+        {uploading ? 'Загрузка...' : label}
+      </button>
+
+      {files.length > 0 && (
+        <div className="border rounded p-2 space-y-2">
+          {files.map((fileId) => (
+            <div key={fileId} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+              <span className="text-sm">Файл загружен: {fileId}</span>
+              <button
+                type="button"
+                onClick={() => handleRemove(fileId)}
+                className="text-red-600 hover:text-red-700 text-sm"
+              >
+                Удалить
+              </button>
+            </div>
+          ))}
         </div>
       )}
     </div>
   );
 };
 
-export default MediaUploader; 
+export default MediaUploader;

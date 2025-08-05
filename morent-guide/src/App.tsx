@@ -3,8 +3,14 @@ import AdminPage from './pages/Admin';
 import BookingPage from './pages/Booking';
 
 function App() {
+  // Проверка работоспособности
+  console.log('App component loaded');
+  
+  // Базовый путь зависит от режима
+  const basename = import.meta.env.MODE === 'production' ? '/morent-guide' : '';
+  
   return (
-    <Router>
+    <Router basename={basename}>
       <Routes>
         {/* Главная страница перенаправляет на админку */}
         <Route path="/" element={<Navigate to="/admin" replace />} />
@@ -17,13 +23,20 @@ function App() {
         
         {/* 404 - страница не найдена */}
         <Route path="*" element={
-          <div className="min-h-screen flex items-center justify-center">
-            <div className="text-center">
-              <h1 className="text-4xl font-heading font-bold text-morent-navy mb-4">404</h1>
-              <p className="text-gray-600 mb-6">Страница не найдена</p>
+          <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ textAlign: 'center' }}>
+              <h1 style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '1rem' }}>404</h1>
+              <p style={{ color: '#666', marginBottom: '1.5rem' }}>Страница не найдена</p>
               <a 
                 href="/admin" 
-                className="btn-primary inline-block"
+                style={{ 
+                  backgroundColor: '#333', 
+                  color: 'white', 
+                  padding: '10px 20px', 
+                  textDecoration: 'none',
+                  borderRadius: '4px',
+                  display: 'inline-block'
+                }}
               >
                 Перейти в админ-панель
               </a>

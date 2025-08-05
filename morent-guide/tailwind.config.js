@@ -7,12 +7,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        'morent-navy': '#0e2a3b',
+        'morent-navy': '#0D2A3F',
         'morent-coral': '#ff8a95',
       },
       fontFamily: {
-        'heading': ['Playfair Display', 'Georgia', 'serif'],
-        'body': ['Inter', 'Open Sans', 'sans-serif'],
+        'heading': ['Playfair Display', 'serif'],
+        'body': ['Inter', 'sans-serif'],
       },
     },
   },
