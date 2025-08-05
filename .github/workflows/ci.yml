@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  # Проверка качества кода
+  quality:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Шаг 1: Клонирование репозитория
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      # Шаг 2: Настройка Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      # Шаг 3: Установка pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      
+      # Шаг 4: Установка зависимостей
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      # Шаг 5: Проверка линтером
+      - name: Lint
+        run: pnpm lint
+      
+      # Шаг 6: Проверка типов TypeScript
+      - name: Type check
+        run: npx tsc --noEmit
+      
+      # Шаг 7: Тестовая сборка
+      - name: Build test
+        run: pnpm build 

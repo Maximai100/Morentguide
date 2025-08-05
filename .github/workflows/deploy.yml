@@ -1,0 +1,75 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+# Разрешаем один job одновременно
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Сборка и деплой
+  deploy:
+    runs-on: ubuntu-latest
+    
+    # Права для деплоя
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    
+    # Переменные окружения
+    env:
+      DIRECTUS_URL: ${{ secrets.DIRECTUS_URL }}
+      DIRECTUS_TOKEN: ${{ secrets.DIRECTUS_TOKEN }}
+
+    steps:
+      # Шаг 1: Клонирование репозитория
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      # Шаг 2: Настройка Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      # Шаг 3: Установка pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      
+      # Шаг 4: Установка зависимостей
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      # Шаг 5: Проверка типов TypeScript
+      - name: Type check
+        run: pnpm build --dry-run || npx tsc --noEmit
+      
+      # Шаг 6: Сборка проекта
+      - name: Build
+        run: pnpm build
+      
+      # Шаг 7: Настройка Pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      
+      # Шаг 8: Загрузка артефактов
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+      
+      # Шаг 9: Деплой на GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4 
