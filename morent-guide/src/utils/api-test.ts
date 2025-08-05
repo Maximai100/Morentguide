@@ -1,10 +1,10 @@
-// Утилита для тестирования демо-режима API
-// Работает только с демо-данными без HTTP-запросов
+// Утилита для тестирования API через прокси Vercel
+// Тестирует подключение к Directus через /api прокси
 
 import { apartmentApi, bookingApi } from './api';
 
-export const testDemoConnection = async () => {
-  console.log('🔄 Тестирование демо-режима API...');
+export const testProxyConnection = async () => {
+  console.log('🔄 Тестирование API через прокси Vercel...');
   
   try {
     // Тест 1: Получение списка апартаментов
@@ -24,27 +24,27 @@ export const testDemoConnection = async () => {
       console.log('✅ Данные бронирования по slug:', bookingData);
     }
     
-    console.log('🎉 Все тесты демо-режима пройдены успешно!');
+    console.log('🎉 Все тесты прокси пройдены успешно!');
     return true;
     
   } catch (error) {
-    console.error('❌ Ошибка в демо-режиме API:', error);
+    console.error('❌ Ошибка в прокси API:', error);
     return false;
   }
 };
 
 // Функция для тестирования через консоль браузера
 export const runApiTest = () => {
-  testDemoConnection().then(success => {
+  testProxyConnection().then(success => {
     if (success) {
-      console.log('✅ Демо-режим API работает корректно');
+      console.log('✅ Прокси API работает корректно');
     } else {
-      console.log('❌ Проблемы с демо-режимом API');
+      console.log('❌ Проблемы с прокси API');
     }
   });
 };
 
 // Экспорт для использования в консоли браузера
 if (typeof window !== 'undefined') {
-  (window as any).testDirectusAPI = runApiTest;
+  (window as unknown as { testDirectusAPI: typeof runApiTest }).testDirectusAPI = runApiTest;
 }
