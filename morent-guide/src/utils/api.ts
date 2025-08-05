@@ -1,8 +1,11 @@
 import axios from 'axios';
 import type { Apartment, Booking, BookingPageData } from '../types';
 
+// HTTPS-адрес Directus (после настройки SSL)
+const DIRECTUS_URL = 'https://1.cycloscope.online'; // ваш домен с SSL
+
 export const api = axios.create({
-  baseURL: '/api',
+  baseURL: DIRECTUS_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
