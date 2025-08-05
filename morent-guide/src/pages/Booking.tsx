@@ -5,6 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { bookingApi } from '../utils/api';
 import type { Booking } from '../types';
+import PhotoGallery from '../components/PhotoGallery';
 
 const BookingPage: React.FC = () => {
   const { slug } = useParams();
@@ -155,13 +156,7 @@ const BookingPage: React.FC = () => {
           <div className="card-enhanced p-8">
             <h2 className="text-2xl font-bold mb-6">Галерея</h2>
             {booking.apartment?.photos && Array.isArray(booking.apartment.photos) && booking.apartment.photos.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {booking.apartment.photos.map((photo, index) => (
-                  <div key={index} className="aspect-square rounded-lg overflow-hidden">
-                    <img src={photo} alt={`Фото ${index + 1}`} className="w-full h-full object-cover" />
-                  </div>
-                ))}
-              </div>
+              <PhotoGallery photos={booking.apartment.photos} />
             ) : (
               <p className="text-gray-500">Фотографии не загружены</p>
             )}

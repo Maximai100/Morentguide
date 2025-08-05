@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { uploadMultipleFiles, deleteFile } from '../utils/directus-upload';
+import { uploadMultipleFiles, deleteFile, getFileUrl } from '../utils/directus-upload';
 
 interface MediaUploaderProps {
   files: string[];
@@ -34,7 +34,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
       }
     } catch (error) {
       console.error('Error uploading files:', error);
-      alert('Ошибка при загрузке файлов');
+      alert('Ошибка при загрузке файлов. Проверьте подключение к Directus.');
     } finally {
       setUploading(false);
     }
@@ -48,6 +48,10 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
       console.error('Error deleting file:', error);
       alert('Ошибка при удалении файла');
     }
+  };
+
+  const isImage = () => {
+    return accept.includes('image') || accept === '*/*';
   };
 
   return (
@@ -74,7 +78,19 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
         <div className="border rounded p-2 space-y-2">
           {files.map((fileId) => (
             <div key={fileId} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-              <span className="text-sm">Файл загружен: {fileId}</span>
+              <div className="flex items-center space-x-2">
+                {isImage() && (
+                  <img 
+                    src={getFileUrl(fileId)} 
+                    alt="Preview" 
+                    className="w-12 h-12 object-cover rounded"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                )}
+                <span className="text-sm">Файл загружен: {fileId}</span>
+              </div>
               <button
                 type="button"
                 onClick={() => handleRemove(fileId)}

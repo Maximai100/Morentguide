@@ -170,6 +170,19 @@ const ApartmentForm: React.FC<ApartmentFormProps> = ({
                 label="Выбрать видео"
               />
             </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Видео электронного замка
+              </label>
+              <MediaUploader
+                files={formData.video_lock ? [formData.video_lock] : []}
+                onFilesChange={(files) => setFormData(prev => ({ ...prev, video_lock: files[0] || null }))}
+                accept="video/*"
+                multiple={false}
+                label="Выбрать видео замка"
+              />
+            </div>
           </div>
         </div>
 
