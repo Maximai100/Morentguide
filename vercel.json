@@ -1,24 +1,11 @@
 {
-  "rootDirectory": "morent-guide",
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "installCommand": "npm install",
-  "framework": "vite",
+  "buildCommand": "cd morent-guide && npm run build",
+  "outputDirectory": "morent-guide/dist",
+  "functions": {},
   "rewrites": [
     {
       "source": "/(.*)",
       "destination": "/index.html"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
     }
   ]
 } 
