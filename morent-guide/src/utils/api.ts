@@ -3,14 +3,23 @@ import type { Apartment, Booking, BookingPageData } from '../types';
 
 // Переключаемся на реальный Directus API
 const DIRECTUS_URL = 'https://1.cycloscope.online';
-// const DIRECTUS_URL = 'demo'; // раскомментируйте для демо-режима
+const DIRECTUS_TOKEN = import.meta.env.VITE_DIRECTUS_TOKEN;
 
 export const api = axios.create({
   baseURL: DIRECTUS_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
+    ...(DIRECTUS_TOKEN && { 'Authorization': `Bearer ${DIRECTUS_TOKEN}` }),
   },
+});
+
+// Добавляем перехватчик для добавления токена к запросам файлов
+api.interceptors.request.use((config) => {
+  if (config.url?.includes('/files') && DIRECTUS_TOKEN) {
+    config.headers.Authorization = `Bearer ${DIRECTUS_TOKEN}`;
+  }
+  return config;
 });
 
 export const apartmentApi = {
