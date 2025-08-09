@@ -8,7 +8,11 @@ export const demoApartments: Apartment[] = [
     building_number: 'А',
     base_address: 'Нагорный тупик 13',
     description: 'Уютные апартаменты в центре города с видом на море',
-    photos: 'demo-photo-1',
+    photos: [
+      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500',
+      'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=500',
+      'https://images.unsplash.com/photo-1513584684374-8bab748fbf90?w=500'
+    ],
     video_entrance: 'demo-video-1',
     video_lock: 'demo-video-lock-1',
     wifi_name: 'WiFi_Morent',
@@ -30,7 +34,11 @@ export const demoApartments: Apartment[] = [
     building_number: 'Б',
     base_address: 'Нагорный тупик 13',
     description: 'Просторные апартаменты с панорамным видом',
-    photos: 'demo-photo-2',
+    photos: [
+      'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=500',
+      'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=500',
+      'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500'
+    ],
     video_entrance: 'demo-video-2',
     video_lock: 'demo-video-lock-2',
     wifi_name: 'WiFi_Morent',

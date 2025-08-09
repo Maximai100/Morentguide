@@ -1,9 +1,11 @@
 import axios from 'axios';
 import type { Apartment, Booking, BookingPageData } from '../types';
+import { demoApartments, demoBookings } from './demo-data';
 
 // Переключаемся на реальный Directus API
 const DIRECTUS_URL = 'https://1.cycloscope.online';
 const DIRECTUS_TOKEN = import.meta.env.VITE_DIRECTUS_TOKEN;
+const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true';
 
 export const api = axios.create({
   baseURL: DIRECTUS_URL,
@@ -54,7 +56,19 @@ export const bookingApi = {
     return res.data.data;
   },
   getBySlug: async (slug: string): Promise<BookingPageData> => {
-    const res = await api.get(`/items/bookings?filter[slug][_eq]=${slug}&fields=*,apartment_id.*`);
+    if (DEMO_MODE) {
+      // Демо-режим: используем локальные данные
+      const booking = demoBookings.find(b => b.slug === slug);
+      if (!booking) throw new Error('Booking not found');
+      const apartment = demoApartments.find(a => a.id === booking.apartment_id);
+      if (!apartment) throw new Error('Apartment not found');
+      
+      // Добавляем apartment к booking для совместимости
+      const bookingWithApartment = { ...booking, apartment };
+      return { booking: bookingWithApartment, apartment };
+    }
+    
+    const res = await api.get(`/items/bookings?filter[slug][_eq]=${encodeURIComponent(slug)}&fields=*,apartment_id.*`);
     const booking = res.data.data?.[0];
     if (!booking) throw new Error('Booking not found');
     const apartment = booking.apartment_id;

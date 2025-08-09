@@ -51,10 +51,10 @@ const BookingsList: React.FC<BookingsListProps> = ({
   };
 
   const copyLink = (booking: Booking) => {
-    const baseUrl = window.location.origin;
-    const path = import.meta.env.DEV ? '/booking/' : '/morent-guide/booking/';
-    const fullLink = `${baseUrl}${path}${booking.slug}`;
-    
+    const origin = window.location.origin;
+    const base = import.meta.env.BASE_URL || '/';
+    const baseNormalized = base.endsWith('/') ? base.slice(0, -1) : base;
+    const fullLink = `${origin}${baseNormalized}/booking/${encodeURIComponent(booking.slug)}`;
     navigator.clipboard.writeText(fullLink);
     alert('Ссылка скопирована!');
   };

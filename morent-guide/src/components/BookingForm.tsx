@@ -68,10 +68,10 @@ const BookingForm: React.FC<BookingFormProps> = ({
   };
 
   const copyLink = () => {
-    const baseUrl = window.location.origin;
-    const path = import.meta.env.DEV ? '/booking/' : '/morent-guide/booking/';
-    const fullLink = `${baseUrl}${path}${formData.slug}`;
-    
+    const origin = window.location.origin;
+    const base = import.meta.env.BASE_URL || '/';
+    const baseNormalized = base.endsWith('/') ? base.slice(0, -1) : base;
+    const fullLink = `${origin}${baseNormalized}/booking/${encodeURIComponent(formData.slug)}`;
     navigator.clipboard.writeText(fullLink);
     alert('Ссылка скопирована!');
   };
@@ -165,7 +165,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
                 <input
                   type="text"
                   readOnly
-                  value={`${window.location.origin}${import.meta.env.DEV ? '/booking/' : '/morent-guide/booking/'}${formData.slug}`}
+                  value={`${window.location.origin}${(import.meta.env.BASE_URL || '/').replace(/\/$/, '')}/booking/${formData.slug}`}
                   className="input-simple flex-1"
                 />
                 <button

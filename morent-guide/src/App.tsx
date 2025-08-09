@@ -1,13 +1,14 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import AdminPage from './pages/Admin';
 import BookingPage from './pages/Booking';
+import TestBookingPage from './pages/TestBooking';
 
 function App() {
   // Проверка работоспособности
   console.log('App component loaded');
   
   return (
-    <Router>
+    <Router basename={import.meta.env.BASE_URL}>
       <Routes>
         {/* Главная страница перенаправляет на админку */}
         <Route path="/" element={<Navigate to="/admin" replace />} />
@@ -17,6 +18,9 @@ function App() {
         
         {/* Страница бронирования для гостей */}
         <Route path="/booking/:slug" element={<BookingPage />} />
+        
+        {/* Тестовая страница для проверки ссылок */}
+        <Route path="/test" element={<TestBookingPage />} />
         
         {/* 404 - страница не найдена */}
         <Route path="*" element={
