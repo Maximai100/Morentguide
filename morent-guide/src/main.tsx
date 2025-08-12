@@ -34,3 +34,4 @@ if (import.meta.env.DEV) {
     console.error('Error loading api-test:', err);
   });
 }
+console.log('Deploy test:', new Date().toISOString(), 'VITE_DEMO_MODE:', import.meta.env.VITE_DEMO_MODE);
