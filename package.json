@@ -1,0 +1,10 @@
+{
+  "name": "morent-app",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.14.0",
+  "scripts": {
+    "build": "cd morent-guide && pnpm build",
+    "dev": "cd morent-guide && pnpm dev"
+  }
+}
