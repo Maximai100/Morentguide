@@ -33,4 +33,3 @@ if (import.meta.env.DEV) {
   }).catch(err => {
     console.error('Error loading api-test:', err);
   });
-}console.log('Mobile styles test:', new Date().toISOString());
