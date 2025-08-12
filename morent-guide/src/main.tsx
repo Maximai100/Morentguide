@@ -33,3 +33,4 @@ if (import.meta.env.DEV) {
   }).catch(err => {
     console.error('Error loading api-test:', err);
   });
+}
