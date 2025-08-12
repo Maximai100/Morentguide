@@ -155,23 +155,23 @@ const BookingForm: React.FC<BookingFormProps> = ({
             <button
               type="button"
               onClick={generateNewLink}
-              className="btn-secondary"
+              className="btn-secondary btn-mobile"
             >
               Создать бронирование и сгенерировать ссылку
             </button>
           ) : (
             <div className="space-y-2">
-              <div className="flex items-center space-x-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <input
                   type="text"
                   readOnly
                   value={`${window.location.origin}${(import.meta.env.BASE_URL || '/').replace(/\/$/, '')}/booking/${formData.slug}`}
-                  className="input-simple flex-1"
+                  className="input-link flex-1"
                 />
                 <button
                   type="button"
                   onClick={copyLink}
-                  className="btn-secondary"
+                  className="btn-secondary btn-mobile"
                 >
                   Копировать
                 </button>

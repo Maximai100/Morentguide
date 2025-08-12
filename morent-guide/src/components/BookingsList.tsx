@@ -128,28 +128,28 @@ const BookingsList: React.FC<BookingsListProps> = ({
             <div className="flex flex-col sm:flex-row gap-2 ml-4">
               <button
                 onClick={() => copyLink(booking)}
-                className="btn-secondary text-sm"
+                className="btn-secondary btn-mobile text-sm"
               >
                 Копировать ссылку
               </button>
               
               <button
                 onClick={() => generateNewSlug(booking)}
-                className="btn-secondary text-sm"
+                className="btn-secondary btn-mobile text-sm"
               >
                 Новая ссылка
               </button>
               
               <button
                 onClick={() => onEdit(booking)}
-                className="btn-secondary text-sm"
+                className="btn-secondary btn-mobile text-sm"
               >
                 Редактировать
               </button>
               
               <button
                 onClick={() => handleDelete(booking.id, booking.guest_name)}
-                className="btn-danger text-sm"
+                className="btn-danger btn-mobile text-sm"
               >
                 Удалить
               </button>
