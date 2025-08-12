@@ -107,18 +107,56 @@ textarea:focus {
   @apply outline-none ring-2 ring-gray-400 ring-offset-2;
 }
 
-/* Мобильные улучшения */
+/* Мобильные улучшения - ПРИНУДИТЕЛЬНЫЕ СТИЛИ */
 @media (max-width: 640px) {
   .input-simple {
-    @apply text-sm leading-relaxed;
+    @apply text-sm leading-relaxed !important;
   }
   
   .input-link {
-    @apply text-xs leading-tight break-all;
+    @apply text-xs leading-tight break-all !important;
+    background-color: #f3f4f6 !important;
+    color: #1f2937 !important;
+    border-color: #9ca3af !important;
   }
   
   /* Улучшенная читаемость ссылок на мобильных */
   input[readonly] {
-    @apply bg-gray-100 text-gray-800 border-gray-400;
+    @apply bg-gray-100 text-gray-800 border-gray-400 !important;
+    background-color: #f3f4f6 !important;
+    color: #1f2937 !important;
+    border-color: #9ca3af !important;
+  }
+  
+  /* Принудительные стили для кнопок на мобильных */
+  .btn-secondary {
+    @apply px-2 py-1.5 text-xs !important;
+  }
+  
+  .btn-danger {
+    @apply px-2 py-1.5 text-xs !important;
+  }
+}
+
+/* Дополнительные принудительные стили для ссылок */
+input[type="text"][readonly] {
+  background-color: #f3f4f6 !important;
+  color: #1f2937 !important;
+  border-color: #9ca3af !important;
+  font-size: 0.75rem !important;
+  line-height: 1rem !important;
+  word-break: break-all !important;
+}
+
+/* Специальные стили для мобильных устройств */
+@media (max-width: 640px) {
+  input[type="text"][readonly] {
+    background-color: #f3f4f6 !important;
+    color: #1f2937 !important;
+    border-color: #9ca3af !important;
+    font-size: 0.75rem !important;
+    line-height: 1rem !important;
+    word-break: break-all !important;
+    font-family: 'Courier New', monospace !important;
   }
 }
