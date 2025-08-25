@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd morent-guide && pnpm install && pnpm build:prod",
+  "buildCommand": "cd morent-guide && npm install && npm run build:prod",
   "outputDirectory": "morent-guide/dist",
   "framework": "vite"
 } 
