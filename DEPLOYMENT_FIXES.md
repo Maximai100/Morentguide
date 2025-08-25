@@ -9,12 +9,12 @@ Type 'Uint8Array<ArrayBufferLike>' is not assignable to type 'string | BufferSou
 ```
 
 ### Решение
-Добавлено приведение типа `as ArrayBuffer` для `applicationServerKey`:
+Использовано свойство `.buffer` для получения `ArrayBuffer` из `Uint8Array`:
 
 ```typescript
 const subscription = await registration.pushManager.subscribe({
   userVisibleOnly: true,
-  applicationServerKey: urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY || '') as ArrayBuffer
+  applicationServerKey: urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY || '').buffer
 });
 ```
 
@@ -54,6 +54,15 @@ npm run build:prod    # Продакшн сборка
 3. **Мониторинг деплоя:**
    - Следить за логами сборки в Vercel
    - Проверять, что все файлы правильно игнорируются в `.vercelignore`
+
+## Выполненные действия
+
+1. ✅ **Исправлена ошибка TypeScript** - использовано свойство `.buffer` для получения `ArrayBuffer`
+2. ✅ **Добавлены переменные окружения** - `VITE_VAPID_PUBLIC_KEY` в `env.local` и `env.example`
+3. ✅ **Проверена локальная сборка** - `npm run build:prod` проходит успешно
+4. ✅ **Проверены типы** - `npm run type-check` без ошибок
+5. ✅ **Проверены зависимости** - `npm audit` не выявил уязвимостей
+6. ✅ **Зафиксированы изменения** - коммит и пуш в репозиторий
 
 ## Статус
 ✅ **ИСПРАВЛЕНО** - Приложение готово к деплою
