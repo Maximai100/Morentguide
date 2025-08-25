@@ -28,9 +28,9 @@ const BookingPage: React.FC = () => {
       console.error('Ошибка загрузки данных бронирования:', err);
       setError('Не удалось загрузить информацию о бронировании');
       showNotification('Ошибка загрузки данных', 'error');
-    } finally {
-      setLoading(false);
-    }
+      } finally {
+        setLoading(false);
+      }
   };
 
   if (loading) {
@@ -130,7 +130,7 @@ const BookingPage: React.FC = () => {
             <p className="text-gray-600 dark:text-gray-400">
               Даты пребывания: <span className="font-semibold">{booking.checkin_date} - {booking.checkout_date}</span>
             </p>
-          </div>
+              </div>
 
           {/* Мобильная навигация */}
           <div className="lg:hidden mb-6">
@@ -164,20 +164,20 @@ const BookingPage: React.FC = () => {
                     🏠 Обзор апартаментов
                   </h2>
                   <div className="space-y-4">
-                    <div>
+              <div>
                       <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Описание</h3>
                       <p className="text-gray-700 dark:text-gray-300">
                         {apartment.description || 'Описание апартаментов будет добавлено позже.'}
                       </p>
-                    </div>
-                    <div>
+              </div>
+              <div>
                       <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Адрес</h3>
                       <p className="text-gray-700 dark:text-gray-300">
                         {apartment.base_address}, корпус {apartment.building_number}, апартамент {apartment.apartment_number}
                       </p>
-                    </div>
-                  </div>
-                </div>
+              </div>
+            </div>
+          </div>
               )}
 
               {/* Фото */}
@@ -239,8 +239,8 @@ const BookingPage: React.FC = () => {
                            ></iframe>
                          </div>
                        </div>
-                     )}
-                  </div>
+            )}
+          </div>
                 </div>
               )}
 
@@ -250,7 +250,7 @@ const BookingPage: React.FC = () => {
                   <h2 className="text-2xl font-heading font-semibold mb-4 text-gray-900 dark:text-white">
                     ❓ Часто задаваемые вопросы
                   </h2>
-                  <div className="space-y-4">
+            <div className="space-y-4">
                     <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
                       <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Во сколько можно заехать?</h3>
                       <p className="text-gray-700 dark:text-gray-300">Заезд возможен с 14:00. При необходимости раннего заезда свяжитесь с менеджером.</p>
@@ -262,13 +262,13 @@ const BookingPage: React.FC = () => {
                     <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
                       <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Что делать с ключами при выезде?</h3>
                       <p className="text-gray-700 dark:text-gray-300">Оставьте ключи в апартаментах и закройте дверь.</p>
-                    </div>
+              </div>
                     <div>
                       <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Что делать в случае проблем?</h3>
                       <p className="text-gray-700 dark:text-gray-300">Свяжитесь с менеджером по указанным контактам.</p>
-                    </div>
-                  </div>
-                </div>
+              </div>
+            </div>
+          </div>
               )}
 
               {/* Контакты */}
@@ -277,7 +277,7 @@ const BookingPage: React.FC = () => {
                   <h2 className="text-2xl font-heading font-semibold mb-4 text-gray-900 dark:text-white">
                     📞 Контакты менеджера
                   </h2>
-                  <div className="space-y-4">
+            <div className="space-y-4">
                     <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                       <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{apartment.manager_name}</h3>
                       <div className="space-y-2">

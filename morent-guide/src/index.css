@@ -60,7 +60,7 @@ body {
   .btn-primary {
     @apply bg-[#0e2a3b] text-white px-4 py-2 rounded-lg hover:bg-[#0a1f2b] transition-colors duration-200 font-medium;
   }
-
+  
   .btn-secondary {
     @apply bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 font-medium;
   }
@@ -68,7 +68,7 @@ body {
   .btn-success {
     @apply bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium;
   }
-
+  
   .btn-danger {
     @apply bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200 font-medium;
   }

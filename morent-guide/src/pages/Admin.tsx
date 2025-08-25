@@ -217,13 +217,13 @@ const AdminPage: React.FC = () => {
               <h2 className="text-2xl font-heading font-semibold text-gray-900 dark:text-white">
                 Апартаменты
               </h2>
-              <button
+                  <button
                 onClick={() => setShowApartmentForm(true)}
                 className="bg-[#0e2a3b] text-white px-4 py-2 rounded-lg hover:bg-[#0a1f2b] transition-colors"
-              >
+                  >
                 ➕ Добавить апартамент
-              </button>
-            </div>
+                  </button>
+                </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {apartments.map((apartment) => (
@@ -235,13 +235,13 @@ const AdminPage: React.FC = () => {
                     {apartment.base_address}, корпус {apartment.building_number}
                   </p>
                   <div className="flex space-x-2">
-                    <button
+                    <button 
                       onClick={() => handleEditApartment(apartment)}
                       className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition-colors"
                     >
                       ✏️ Редактировать
                     </button>
-                    <button
+                    <button 
                       onClick={() => handleDeleteApartment(apartment.id)}
                       className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors"
                     >
@@ -260,13 +260,13 @@ const AdminPage: React.FC = () => {
               <h2 className="text-2xl font-heading font-semibold text-gray-900 dark:text-white">
                 Бронирования
               </h2>
-              <button
+                  <button
                 onClick={() => setShowBookingForm(true)}
                 className="bg-[#0e2a3b] text-white px-4 py-2 rounded-lg hover:bg-[#0a1f2b] transition-colors"
-              >
+                  >
                 ➕ Добавить бронирование
-              </button>
-            </div>
+                  </button>
+                </div>
 
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
               <div className="overflow-x-auto">
@@ -322,12 +322,12 @@ const AdminPage: React.FC = () => {
                               >
                                 ✏️
                               </button>
-                              <button
+                    <button 
                                 onClick={() => handleDeleteBooking(booking.id)}
                                 className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                              >
+                    >
                                 🗑️
-                              </button>
+                    </button>
                             </div>
                           </td>
                         </tr>
@@ -348,7 +348,7 @@ const AdminPage: React.FC = () => {
               </h2>
             </div>
             <BookingCalendar onBookingSelect={handleBookingSelect} />
-          </div>
+                </div>
         )}
 
         {/* Модальные окна */}
@@ -370,14 +370,14 @@ const AdminPage: React.FC = () => {
         {showBookingForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-              <BookingForm
-                booking={editingBooking}
+                <BookingForm
+                  booking={editingBooking}
                 onSave={handleBookingSave}
                 onCancel={() => {
                   setShowBookingForm(false);
-                  setEditingBooking(undefined);
-                }}
-              />
+                    setEditingBooking(undefined);
+                  }}
+                />
             </div>
           </div>
         )}
