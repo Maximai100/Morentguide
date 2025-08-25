@@ -2,14 +2,14 @@ import axios from 'axios';
 import type { Apartment, Booking, BookingPageData } from '../types';
 import { demoApartments, demoBookings } from './demo-data';
 
-// Переключаемся на реальный Directus API
-const DIRECTUS_URL = 'https://1.cycloscope.online';
+// Используем переменные окружения вместо хардкода
+const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL || 'https://1.cycloscope.online';
 const DIRECTUS_TOKEN = import.meta.env.VITE_DIRECTUS_TOKEN;
 const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true';
 
 export const api = axios.create({
   baseURL: DIRECTUS_URL,
-  timeout: 10000,
+  timeout: 15000, // Увеличиваем timeout
   headers: {
     'Content-Type': 'application/json',
     ...(DIRECTUS_TOKEN && { 'Authorization': `Bearer ${DIRECTUS_TOKEN}` }),
@@ -24,70 +24,211 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Добавляем перехватчик для обработки ошибок
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('API Error:', error.response?.data || error.message);
+    return Promise.reject(error);
+  }
+);
+
 export const apartmentApi = {
   getAll: async (): Promise<Apartment[]> => {
-    const res = await api.get('/items/apartments');
-    return res.data.data || [];
+    if (DEMO_MODE) {
+      return demoApartments;
+    }
+    try {
+      const res = await api.get('/items/apartments');
+      return res.data.data || [];
+    } catch (error) {
+      console.error('Failed to fetch apartments:', error);
+      throw new Error('Не удалось загрузить апартаменты');
+    }
   },
   getById: async (id: string): Promise<Apartment> => {
-    const res = await api.get(`/items/apartments/${id}`);
-    return res.data.data;
+    if (DEMO_MODE) {
+      const apartment = demoApartments.find(a => a.id === id);
+      if (!apartment) throw new Error('Апартамент не найден');
+      return apartment;
+    }
+    try {
+      const res = await api.get(`/items/apartments/${id}`);
+      return res.data.data;
+    } catch (error) {
+      console.error('Failed to fetch apartment:', error);
+      throw new Error('Не удалось загрузить апартамент');
+    }
   },
   create: async (apartment: Omit<Apartment, 'id'>): Promise<Apartment> => {
-    const res = await api.post('/items/apartments', apartment);
-    return res.data.data;
+    if (DEMO_MODE) {
+      const newApartment = { ...apartment, id: `demo-${Date.now()}` };
+      demoApartments.push(newApartment as Apartment);
+      return newApartment as Apartment;
+    }
+    try {
+      const res = await api.post('/items/apartments', apartment);
+      return res.data.data;
+    } catch (error) {
+      console.error('Failed to create apartment:', error);
+      throw new Error('Не удалось создать апартамент');
+    }
   },
   update: async (id: string, apartment: Partial<Apartment>): Promise<Apartment> => {
-    const res = await api.patch(`/items/apartments/${id}`, apartment);
-    return res.data.data;
+    if (DEMO_MODE) {
+      const index = demoApartments.findIndex(a => a.id === id);
+      if (index === -1) throw new Error('Апартамент не найден');
+      demoApartments[index] = { ...demoApartments[index], ...apartment };
+      return demoApartments[index];
+    }
+    try {
+      const res = await api.patch(`/items/apartments/${id}`, apartment);
+      return res.data.data;
+    } catch (error) {
+      console.error('Failed to update apartment:', error);
+      throw new Error('Не удалось обновить апартамент');
+    }
   },
   delete: async (id: string): Promise<void> => {
-    await api.delete(`/items/apartments/${id}`);
+    if (DEMO_MODE) {
+      const index = demoApartments.findIndex(a => a.id === id);
+      if (index === -1) throw new Error('Апартамент не найден');
+      demoApartments.splice(index, 1);
+      return;
+    }
+    try {
+      await api.delete(`/items/apartments/${id}`);
+    } catch (error) {
+      console.error('Failed to delete apartment:', error);
+      throw new Error('Не удалось удалить апартамент');
+    }
   },
 };
 
 export const bookingApi = {
   getAll: async (): Promise<Booking[]> => {
-    const res = await api.get('/items/bookings?fields=*,apartment_id.*');
-    return res.data.data || [];
+    if (DEMO_MODE) {
+      return demoBookings;
+    }
+    try {
+      const res = await api.get('/items/bookings?fields=*,apartment_id.*');
+      return res.data.data || [];
+    } catch (error) {
+      console.error('Failed to fetch bookings:', error);
+      throw new Error('Не удалось загрузить бронирования');
+    }
   },
   getById: async (id: string): Promise<Booking> => {
-    const res = await api.get(`/items/bookings/${id}?fields=*,apartment_id.*`);
-    return res.data.data;
+    if (DEMO_MODE) {
+      const booking = demoBookings.find(b => b.id === id);
+      if (!booking) throw new Error('Бронирование не найдено');
+      return booking;
+    }
+    try {
+      const res = await api.get(`/items/bookings/${id}?fields=*,apartment_id.*`);
+      return res.data.data;
+    } catch (error) {
+      console.error('Failed to fetch booking:', error);
+      throw new Error('Не удалось загрузить бронирование');
+    }
   },
   getBySlug: async (slug: string): Promise<BookingPageData> => {
     if (DEMO_MODE) {
-      // Демо-режим: используем локальные данные
       const booking = demoBookings.find(b => b.slug === slug);
-      if (!booking) throw new Error('Booking not found');
+      if (!booking) throw new Error('Бронирование не найдено');
       const apartment = demoApartments.find(a => a.id === booking.apartment_id);
-      if (!apartment) throw new Error('Apartment not found');
+      if (!apartment) throw new Error('Апартамент не найден');
       
-      // Добавляем apartment к booking для совместимости
       const bookingWithApartment = { ...booking, apartment };
       return { booking: bookingWithApartment, apartment };
     }
     
-    const res = await api.get(`/items/bookings?filter[slug][_eq]=${encodeURIComponent(slug)}&fields=*,apartment_id.*`);
-    const booking = res.data.data?.[0];
-    if (!booking) throw new Error('Booking not found');
-    const apartment = booking.apartment_id;
-    if (!apartment) throw new Error('Apartment not found');
-    return { booking, apartment };
+    try {
+      const res = await api.get(`/items/bookings?filter[slug][_eq]=${encodeURIComponent(slug)}&fields=*,apartment_id.*`);
+      const booking = res.data.data?.[0];
+      if (!booking) throw new Error('Бронирование не найдено');
+      const apartment = booking.apartment_id;
+      if (!apartment) throw new Error('Апартамент не найден');
+      return { booking, apartment };
+    } catch (error) {
+      console.error('Failed to fetch booking by slug:', error);
+      throw new Error('Не удалось загрузить бронирование');
+    }
   },
   create: async (booking: Omit<Booking, 'id' | 'created_at'>): Promise<Booking> => {
-    const res = await api.post('/items/bookings', booking);
-    return res.data.data;
+    if (DEMO_MODE) {
+      const newBooking = { 
+        ...booking, 
+        id: `demo-booking-${Date.now()}`,
+        created_at: new Date().toISOString()
+      };
+      demoBookings.push(newBooking as Booking);
+      return newBooking as Booking;
+    }
+    try {
+      const res = await api.post('/items/bookings', booking);
+      return res.data.data;
+    } catch (error) {
+      console.error('Failed to create booking:', error);
+      throw new Error('Не удалось создать бронирование');
+    }
   },
   update: async (id: string, booking: Partial<Booking>): Promise<Booking> => {
-    const res = await api.patch(`/items/bookings/${id}`, booking);
-    return res.data.data;
+    if (DEMO_MODE) {
+      const index = demoBookings.findIndex(b => b.id === id);
+      if (index === -1) throw new Error('Бронирование не найдено');
+      demoBookings[index] = { ...demoBookings[index], ...booking };
+      return demoBookings[index];
+    }
+    try {
+      const res = await api.patch(`/items/bookings/${id}`, booking);
+      return res.data.data;
+    } catch (error) {
+      console.error('Failed to update booking:', error);
+      throw new Error('Не удалось обновить бронирование');
+    }
   },
   delete: async (id: string): Promise<void> => {
-    await api.delete(`/items/bookings/${id}`);
+    if (DEMO_MODE) {
+      const index = demoBookings.findIndex(b => b.id === id);
+      if (index === -1) throw new Error('Бронирование не найдено');
+      demoBookings.splice(index, 1);
+      return;
+    }
+    try {
+      await api.delete(`/items/bookings/${id}`);
+    } catch (error) {
+      console.error('Failed to delete booking:', error);
+      throw new Error('Не удалось удалить бронирование');
+    }
   },
   generateSlug: async (): Promise<{ slug: string }> => {
-    const newSlug = `booking-${Date.now()}`;
-    return { slug: newSlug };
+    // Генерируем уникальный slug с проверкой
+    const generateUniqueSlug = async (): Promise<string> => {
+      const timestamp = Date.now();
+      const random = Math.random().toString(36).substring(2, 8);
+      const slug = `booking-${timestamp}-${random}`;
+      
+      if (DEMO_MODE) {
+        // В демо-режиме просто возвращаем slug
+        return slug;
+      }
+      
+      try {
+        // Проверяем уникальность slug
+        const res = await api.get(`/items/bookings?filter[slug][_eq]=${slug}`);
+        if (res.data.data?.length > 0) {
+          // Если slug уже существует, генерируем новый
+          return generateUniqueSlug();
+        }
+        return slug;
+      } catch (error) {
+        console.error('Failed to check slug uniqueness:', error);
+        return slug; // Возвращаем slug даже при ошибке проверки
+      }
+    };
+    
+    const slug = await generateUniqueSlug();
+    return { slug };
   },
 }; 

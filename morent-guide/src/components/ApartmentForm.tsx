@@ -1,298 +1,393 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Apartment } from '../types';
+import { apartmentApi } from '../utils/api';
 import MediaUploader from './MediaUploader';
+import { validateApartment, showNotification } from '../utils/helpers';
 
 interface ApartmentFormProps {
   apartment?: Apartment;
-  onSave: (apartment: Omit<Apartment, 'id'> | Apartment) => Promise<void>;
+  onSave: (apartment: Apartment) => void;
   onCancel: () => void;
-  isLoading?: boolean;
 }
 
-const ApartmentForm: React.FC<ApartmentFormProps> = ({
-  apartment,
-  onSave,
-  onCancel,
-  isLoading = false
-}) => {
-  const [formData, setFormData] = useState<Omit<Apartment, 'id'>>({
-    title: apartment?.title || '',
-    apartment_number: apartment?.apartment_number || '',
-    building_number: apartment?.building_number || '',
-    base_address: apartment?.base_address || 'Нагорный тупик 13',
-    description: apartment?.description || '',
-    photos: Array.isArray(apartment?.photos) ? apartment.photos : [],
-    video_entrance: apartment?.video_entrance || null,
-    video_lock: apartment?.video_lock || null,
-    wifi_name: apartment?.wifi_name || '',
-    wifi_password: apartment?.wifi_password || '',
-    code_building: apartment?.code_building || '',
-    code_lock: apartment?.code_lock || '',
-    faq_checkin: apartment?.faq_checkin || '',
-    faq_apartment: apartment?.faq_apartment || '',
-    faq_area: apartment?.faq_area || '',
-    map_embed_code: apartment?.map_embed_code || '',
-    manager_name: apartment?.manager_name || '',
-    manager_phone: apartment?.manager_phone || '',
-    manager_email: apartment?.manager_email || ''
+const ApartmentForm: React.FC<ApartmentFormProps> = ({ apartment, onSave, onCancel }) => {
+  const [formData, setFormData] = useState<Partial<Apartment>>({
+    title: '',
+    apartment_number: '',
+    building_number: '',
+    base_address: '',
+    description: '',
+    photos: [],
+    video_entrance: '',
+    video_lock: '',
+    wifi_name: '',
+    wifi_password: '',
+    code_building: '',
+    code_lock: '',
+    faq_checkin: '',
+    faq_apartment: '',
+    faq_area: '',
+    map_embed_code: '',
+    manager_name: '',
+    manager_phone: '',
+    manager_email: '',
   });
+
+  const [errors, setErrors] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (apartment) {
+      setFormData(apartment);
+    }
+  }, [apartment]);
+
+  const handleInputChange = (field: keyof Apartment, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    // Очищаем ошибки при изменении поля
+    if (errors.length > 0) {
+      setErrors([]);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Валидация формы
+    const validation = validateApartment(formData);
+    if (!validation.isValid) {
+      setErrors(validation.errors);
+      showNotification('Пожалуйста, исправьте ошибки в форме', 'error');
+      return;
+    }
+
+    setIsLoading(true);
     try {
-      const dataToSave = apartment 
-        ? { ...formData, id: apartment.id }
-        : formData;
+      let savedApartment: Apartment;
       
-      await onSave(dataToSave);
+      if (apartment?.id) {
+        // Обновление существующего апартамента
+        savedApartment = await apartmentApi.update(apartment.id, formData);
+        showNotification('Апартамент успешно обновлен', 'success');
+      } else {
+        // Создание нового апартамента
+        savedApartment = await apartmentApi.create(formData as Omit<Apartment, 'id'>);
+        showNotification('Апартамент успешно создан', 'success');
+      }
+      
+      onSave(savedApartment);
     } catch (error) {
-      console.error('Error saving apartment:', error);
-      alert('Ошибка при сохранении апартамента');
+      console.error('Failed to save apartment:', error);
+      showNotification('Ошибка при сохранении апартамента', 'error');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
   return (
-    <div className="card-simple p-6">
-      <h3 className="text-xl font-heading font-semibold mb-6">
-        {apartment ? 'Редактировать апартамент' : 'Добавить новый апартамент'}
-      </h3>
+    <div className="max-w-4xl mx-auto">
+      <div className="mb-6">
+        <h2 className="text-2xl font-heading font-bold">
+          {apartment ? 'Редактировать апартамент' : 'Добавить апартамент'}
+        </h2>
+      </div>
+
+      {/* Отображение ошибок */}
+      {errors.length > 0 && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <h3 className="text-red-800 font-semibold mb-2">Ошибки в форме:</h3>
+          <ul className="list-disc list-inside text-red-700 space-y-1">
+            {errors.map((error, index) => (
+              <li key={index}>{error}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Основная информация */}
-        <div>
-          <h4 className="text-lg font-heading font-medium mb-4">Основная информация</h4>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="card-enhanced p-6">
+          <h3 className="text-lg font-semibold mb-4">Основная информация</h3>
+          <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Название апартамента
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Название апартамента *
               </label>
               <input
                 type="text"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                className="input-simple"
+                value={formData.title || ''}
+                onChange={(e) => handleInputChange('title', e.target.value)}
+                className="input-field"
+                placeholder="Например: Апартаменты Морент"
                 required
               />
             </div>
-            
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Номер апартамента
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Номер апартамента *
               </label>
               <input
                 type="text"
-                name="apartment_number"
-                value={formData.apartment_number}
-                onChange={handleInputChange}
-                className="input-simple"
+                value={formData.apartment_number || ''}
+                onChange={(e) => handleInputChange('apartment_number', e.target.value)}
+                className="input-field"
+                placeholder="101"
                 required
               />
             </div>
-            
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Номер корпуса
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Номер корпуса *
               </label>
               <input
                 type="text"
-                name="building_number"
-                value={formData.building_number}
-                onChange={handleInputChange}
-                className="input-simple"
+                value={formData.building_number || ''}
+                onChange={(e) => handleInputChange('building_number', e.target.value)}
+                className="input-field"
+                placeholder="А"
                 required
               />
             </div>
-            
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Базовый адрес
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Базовый адрес *
               </label>
               <input
                 type="text"
-                name="base_address"
-                value={formData.base_address}
-                onChange={handleInputChange}
-                className="input-simple"
+                value={formData.base_address || ''}
+                onChange={(e) => handleInputChange('base_address', e.target.value)}
+                className="input-field"
+                placeholder="Нагорный тупик 13"
                 required
               />
             </div>
           </div>
-          
           <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Описание
             </label>
             <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
+              value={formData.description || ''}
+              onChange={(e) => handleInputChange('description', e.target.value)}
+              className="input-field"
               rows={3}
-              className="input-simple"
+              placeholder="Описание апартаментов..."
             />
           </div>
         </div>
 
-        {/* Медиафайлы */}
-        <div>
-          <h4 className="text-lg font-heading font-medium mb-4">Медиафайлы</h4>
-          
+        {/* Медиа файлы */}
+        <div className="card-enhanced p-6">
+          <h3 className="text-lg font-semibold mb-4">Медиа файлы</h3>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Фотографии апартамента
+                Фотографии
               </label>
               <MediaUploader
                 files={Array.isArray(formData.photos) ? formData.photos : []}
-                onFilesChange={(files) => setFormData(prev => ({ ...prev, photos: files }))}
+                onFilesChange={(files) => handleInputChange('photos', files)}
                 accept="image/*"
-                multiple
-                label="Выбрать фото"
+                multiple={true}
+                label="Выбрать фотографии"
               />
             </div>
-            
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Видео подъезда
+                </label>
+                <MediaUploader
+                  files={formData.video_entrance ? [formData.video_entrance] : []}
+                  onFilesChange={(files) => handleInputChange('video_entrance', files[0] || '')}
+                  accept="video/*"
+                  multiple={false}
+                  label="Выбрать видео"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Видео замка
+                </label>
+                <MediaUploader
+                  files={formData.video_lock ? [formData.video_lock] : []}
+                  onFilesChange={(files) => handleInputChange('video_lock', files[0] || '')}
+                  accept="video/*"
+                  multiple={false}
+                  label="Выбрать видео"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Доступ */}
+        <div className="card-enhanced p-6">
+          <h3 className="text-lg font-semibold mb-4">Доступ</h3>
+          <div className="grid md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Видео входа
+                Название Wi-Fi *
               </label>
-              <MediaUploader
-                files={formData.video_entrance ? [formData.video_entrance] : []}
-                onFilesChange={(files) => setFormData(prev => ({ ...prev, video_entrance: files[0] || null }))}
-                accept="video/*"
-                multiple={false}
-                label="Выбрать видео"
+              <input
+                type="text"
+                value={formData.wifi_name || ''}
+                onChange={(e) => handleInputChange('wifi_name', e.target.value)}
+                className="input-field"
+                placeholder="WiFi_Morent"
+                required
               />
             </div>
-            
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Видео электронного замка
+                Пароль Wi-Fi *
               </label>
-              <MediaUploader
-                files={formData.video_lock ? [formData.video_lock] : []}
-                onFilesChange={(files) => setFormData(prev => ({ ...prev, video_lock: files[0] || null }))}
-                accept="video/*"
-                multiple={false}
-                label="Выбрать видео замка"
+              <input
+                type="text"
+                value={formData.wifi_password || ''}
+                onChange={(e) => handleInputChange('wifi_password', e.target.value)}
+                className="input-field"
+                placeholder="123Morent"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Код подъезда *
+              </label>
+              <input
+                type="text"
+                value={formData.code_building || ''}
+                onChange={(e) => handleInputChange('code_building', e.target.value)}
+                className="input-field"
+                placeholder="#2020"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Код замка *
+              </label>
+              <input
+                type="text"
+                value={formData.code_lock || ''}
+                onChange={(e) => handleInputChange('code_lock', e.target.value)}
+                className="input-field"
+                placeholder="#101"
+                required
               />
             </div>
           </div>
         </div>
 
-        {/* Доступ и коды */}
-        <div>
-          <h4 className="text-lg font-heading font-medium mb-4">Доступ и коды</h4>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* FAQ */}
+        <div className="card-enhanced p-6">
+          <h3 className="text-lg font-semibold mb-4">Часто задаваемые вопросы</h3>
+          <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Название Wi-Fi
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                FAQ по заселению
               </label>
-              <input
-                type="text"
-                name="wifi_name"
-                value={formData.wifi_name}
-                onChange={handleInputChange}
-                className="input-simple"
+              <textarea
+                value={formData.faq_checkin || ''}
+                onChange={(e) => handleInputChange('faq_checkin', e.target.value)}
+                className="input-field"
+                rows={4}
+                placeholder="Инструкции по заселению..."
               />
             </div>
-            
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Пароль Wi-Fi
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                FAQ по апартаментам
               </label>
-              <input
-                type="text"
-                name="wifi_password"
-                value={formData.wifi_password}
-                onChange={handleInputChange}
-                className="input-simple"
+              <textarea
+                value={formData.faq_apartment || ''}
+                onChange={(e) => handleInputChange('faq_apartment', e.target.value)}
+                className="input-field"
+                rows={4}
+                placeholder="Информация об апартаментах..."
               />
             </div>
-            
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Код подъезда
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                FAQ по району
               </label>
-              <input
-                type="text"
-                name="code_building"
-                value={formData.code_building}
-                onChange={handleInputChange}
-                className="input-simple"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Код замка
-              </label>
-              <input
-                type="text"
-                name="code_lock"
-                value={formData.code_lock}
-                onChange={handleInputChange}
-                className="input-simple"
+              <textarea
+                value={formData.faq_area || ''}
+                onChange={(e) => handleInputChange('faq_area', e.target.value)}
+                className="input-field"
+                rows={4}
+                placeholder="Информация о районе..."
               />
             </div>
           </div>
         </div>
 
-        {/* Менеджер */}
-        <div>
-          <h4 className="text-lg font-heading font-medium mb-4">Менеджер</h4>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Карта */}
+        <div className="card-enhanced p-6">
+          <h3 className="text-lg font-semibold mb-4">Карта</h3>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Код вставки Яндекс.Карт
+            </label>
+            <textarea
+              value={formData.map_embed_code || ''}
+              onChange={(e) => handleInputChange('map_embed_code', e.target.value)}
+              className="input-field"
+              rows={3}
+              placeholder='<iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A123456789&amp;source=constructor" width="100%" height="400" frameborder="0"></iframe>'
+            />
+          </div>
+        </div>
+
+        {/* Контакты менеджера */}
+        <div className="card-enhanced p-6">
+          <h3 className="text-lg font-semibold mb-4">Контакты менеджера</h3>
+          <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Имя менеджера
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Имя менеджера *
               </label>
               <input
                 type="text"
-                name="manager_name"
-                value={formData.manager_name}
-                onChange={handleInputChange}
-                className="input-simple"
+                value={formData.manager_name || ''}
+                onChange={(e) => handleInputChange('manager_name', e.target.value)}
+                className="input-field"
+                placeholder="Менеджер Морент"
+                required
               />
             </div>
-            
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Телефон менеджера
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Телефон *
               </label>
               <input
                 type="tel"
-                name="manager_phone"
-                value={formData.manager_phone}
-                onChange={handleInputChange}
-                className="input-simple"
+                value={formData.manager_phone || ''}
+                onChange={(e) => handleInputChange('manager_phone', e.target.value)}
+                className="input-field"
+                placeholder="88007005501"
+                required
               />
             </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email менеджера
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Email *
               </label>
               <input
                 type="email"
-                name="manager_email"
-                value={formData.manager_email}
-                onChange={handleInputChange}
-                className="input-simple"
+                value={formData.manager_email || ''}
+                onChange={(e) => handleInputChange('manager_email', e.target.value)}
+                className="input-field"
+                placeholder="morent@mail.ru"
+                required
               />
             </div>
           </div>
         </div>
 
         {/* Кнопки */}
-        <div className="flex justify-end space-x-4 pt-6 border-t">
+        <div className="flex justify-end space-x-4">
           <button
             type="button"
             onClick={onCancel}
@@ -306,7 +401,7 @@ const ApartmentForm: React.FC<ApartmentFormProps> = ({
             className="btn-primary"
             disabled={isLoading}
           >
-            {isLoading ? 'Сохранение...' : (apartment ? 'Сохранить' : 'Создать')}
+            {isLoading ? 'Сохранение...' : (apartment ? 'Обновить' : 'Создать')}
           </button>
         </div>
       </form>

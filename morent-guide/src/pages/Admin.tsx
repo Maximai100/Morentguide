@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import type { Apartment, Booking } from '../types';
-import { apartmentApi, bookingApi } from '../utils/api';
 import ApartmentForm from '../components/ApartmentForm';
 import ApartmentsList from '../components/ApartmentsList';
 import BookingForm from '../components/BookingForm';
@@ -13,13 +12,24 @@ const AdminPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [editingApartment, setEditingApartment] = useState<Apartment | undefined>(undefined);
   const [editingBooking, setEditingBooking] = useState<Booking | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const handleCancel = () => {
     setViewMode('list');
     setEditingApartment(undefined);
     setEditingBooking(undefined);
+  };
+
+  const handleApartmentSave = async (_apartment: Apartment) => {
+    setViewMode('list');
+    setEditingApartment(undefined);
+    setRefreshTrigger(x => x + 1);
+  };
+
+  const handleBookingSave = async (_booking: Booking | Omit<Booking, 'id'>) => {
+    setViewMode('list');
+    setEditingBooking(undefined);
+    setRefreshTrigger(x => x + 1);
   };
 
   return (
@@ -98,24 +108,13 @@ const AdminPage: React.FC = () => {
                     >
                       Апартаменты
                     </button>
-                    <span className="mx-2">›</span>
-                    <span>Добавить апартамент</span>
+                    <span className="mx-2">/</span>
+                    <span className="text-gray-900">Добавить апартамент</span>
                   </nav>
                 </div>
                 <ApartmentForm
-                  onSave={async (apt) => {
-                    setIsLoading(true);
-                    try {
-                      await apartmentApi.create(apt);
-                    } catch (error) {
-                      console.error('Error creating apartment:', error);
-                    }
-                    setIsLoading(false);
-                    setViewMode('list');
-                    setRefreshTrigger(x => x + 1);
-                  }}
+                  onSave={handleApartmentSave}
                   onCancel={handleCancel}
-                  isLoading={isLoading}
                 />
               </>
             )}
@@ -129,32 +128,20 @@ const AdminPage: React.FC = () => {
                     >
                       Апартаменты
                     </button>
-                    <span className="mx-2">›</span>
-                    <span>Редактировать апартамент</span>
+                    <span className="mx-2">/</span>
+                    <span className="text-gray-900">Редактировать апартамент</span>
                   </nav>
                 </div>
                 <ApartmentForm
                   apartment={editingApartment}
-                  onSave={async (apt) => {
-                    setIsLoading(true);
-                    try {
-                      const apartmentData = apt as Apartment;
-                      await apartmentApi.update(apartmentData.id, apartmentData);
-                    } catch (error) {
-                      console.error('Error updating apartment:', error);
-                    }
-                    setIsLoading(false);
-                    setViewMode('list');
-                    setEditingApartment(undefined);
-                    setRefreshTrigger(x => x + 1);
-                  }}
+                  onSave={handleApartmentSave}
                   onCancel={handleCancel}
-                  isLoading={isLoading}
                 />
               </>
             )}
           </div>
         )}
+
         {activeTab === 'bookings' && (
           <div>
             {viewMode === 'list' && (
@@ -165,7 +152,7 @@ const AdminPage: React.FC = () => {
                     onClick={() => setViewMode('create')}
                     className="btn-primary"
                   >
-                    Создать бронирование
+                    Добавить бронирование
                   </button>
                 </div>
                 <BookingsList
@@ -188,24 +175,13 @@ const AdminPage: React.FC = () => {
                     >
                       Бронирования
                     </button>
-                    <span className="mx-2">›</span>
-                    <span>Создать бронирование</span>
+                    <span className="mx-2">/</span>
+                    <span className="text-gray-900">Добавить бронирование</span>
                   </nav>
                 </div>
                 <BookingForm
-                  onSave={async (booking) => {
-                    setIsLoading(true);
-                    try {
-                      await bookingApi.create(booking);
-                    } catch (error) {
-                      console.error('Error creating booking:', error);
-                    }
-                    setIsLoading(false);
-                    setViewMode('list');
-                    setRefreshTrigger(x => x + 1);
-                  }}
+                  onSave={handleBookingSave}
                   onCancel={handleCancel}
-                  isLoading={isLoading}
                 />
               </>
             )}
@@ -219,27 +195,14 @@ const AdminPage: React.FC = () => {
                     >
                       Бронирования
                     </button>
-                    <span className="mx-2">›</span>
-                    <span>Редактировать бронирование</span>
+                    <span className="mx-2">/</span>
+                    <span className="text-gray-900">Редактировать бронирование</span>
                   </nav>
                 </div>
                 <BookingForm
                   booking={editingBooking}
-                  onSave={async (booking) => {
-                    setIsLoading(true);
-                    try {
-                      const bookingData = booking as Booking;
-                      await bookingApi.update(bookingData.id, bookingData);
-                    } catch (error) {
-                      console.error('Error updating booking:', error);
-                    }
-                    setIsLoading(false);
-                    setViewMode('list');
-                    setEditingBooking(undefined);
-                    setRefreshTrigger(x => x + 1);
-                  }}
+                  onSave={handleBookingSave}
                   onCancel={handleCancel}
-                  isLoading={isLoading}
                 />
               </>
             )}

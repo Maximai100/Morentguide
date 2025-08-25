@@ -1,5 +1,4 @@
-import React, { useState, useRef } from 'react';
-import { uploadMultipleFiles, deleteFile, getFileUrl } from '../utils/directus-upload';
+import React, { useState } from 'react';
 
 interface MediaUploaderProps {
   files: string[];
@@ -12,102 +11,91 @@ interface MediaUploaderProps {
 const MediaUploader: React.FC<MediaUploaderProps> = ({
   files,
   onFilesChange,
-  accept = 'image/*',
-  multiple = true,
-  label = 'Выбрать файл'
+  accept = '*/*',
+  multiple = false,
+  label = 'Выбрать файлы'
 }) => {
-  const [uploading, setUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = e.target.files;
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = event.target.files;
     if (!selectedFiles || selectedFiles.length === 0) return;
 
-    setUploading(true);
+    setIsUploading(true);
     try {
-      const uploadedFileIds = await uploadMultipleFiles(Array.from(selectedFiles));
+      // В демо-режиме просто создаем URL для файлов
+      const fileUrls: string[] = [];
       
-      if (uploadedFileIds.length > 0) {
-        if (multiple) {
-          onFilesChange([...files, ...uploadedFileIds]);
-        } else {
-          onFilesChange(uploadedFileIds.slice(0, 1));
-        }
-        
-        // Показываем успешное сообщение
-        console.log('Файлы успешно загружены:', uploadedFileIds);
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i];
+        const url = URL.createObjectURL(file);
+        fileUrls.push(url);
+      }
+
+      if (multiple) {
+        onFilesChange([...files, ...fileUrls]);
       } else {
-        console.log('Нет файлов для загрузки');
+        onFilesChange(fileUrls);
       }
     } catch (error) {
       console.error('Error uploading files:', error);
-      
-      // Показываем ошибку только если действительно что-то пошло не так
-      if (error instanceof Error && error.message.includes('Directus')) {
-        alert(`Ошибка при загрузке файлов: ${error.message}\n\nПроверьте подключение к Directus или попробуйте позже.`);
-      }
     } finally {
-      setUploading(false);
+      setIsUploading(false);
     }
   };
 
-  const handleRemove = async (fileId: string) => {
-    try {
-      await deleteFile(fileId);
-      onFilesChange(files.filter(f => f !== fileId));
-    } catch (error) {
-      console.error('Error deleting file:', error);
-      alert('Ошибка при удалении файла');
-    }
-  };
-
-  const isImage = () => {
-    return accept.includes('image') || accept === '*/*';
+  const removeFile = (index: number) => {
+    const newFiles = files.filter((_, i) => i !== index);
+    onFilesChange(newFiles);
   };
 
   return (
-    <div className="space-y-2">
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept={accept}
-        multiple={multiple}
-        onChange={handleFileSelect}
-        className="hidden"
-      />
-      
-      <button
-        type="button"
-        onClick={() => fileInputRef.current?.click()}
-        disabled={uploading}
-        className="btn-secondary"
-      >
-        {uploading ? 'Загрузка...' : label}
-      </button>
+    <div className="space-y-4">
+      <div>
+        <input
+          type="file"
+          accept={accept}
+          multiple={multiple}
+          onChange={handleFileChange}
+          className="hidden"
+          id="file-upload"
+          disabled={isUploading}
+        />
+        <label
+          htmlFor="file-upload"
+          className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+        >
+          {isUploading ? 'Загрузка...' : label}
+        </label>
+      </div>
 
       {files.length > 0 && (
-        <div className="border rounded p-2 space-y-2">
-          {files.map((fileId) => (
-            <div key={fileId} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-              <div className="flex items-center space-x-2">
-                {isImage() && (
-                  <img 
-                    src={getFileUrl(fileId)} 
-                    alt="Preview" 
-                    className="w-12 h-12 object-cover rounded"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                )}
-                <span className="text-sm">Файл загружен: {fileId}</span>
-              </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {files.map((file, index) => (
+            <div key={index} className="relative group">
+              {file.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                <img
+                  src={file}
+                  alt={`Uploaded file ${index + 1}`}
+                  className="w-full h-24 object-cover rounded-lg"
+                />
+              ) : file.match(/\.(mp4|webm|ogg)$/i) ? (
+                <video
+                  src={file}
+                  className="w-full h-24 object-cover rounded-lg"
+                  controls
+                />
+              ) : (
+                <div className="w-full h-24 bg-gray-100 rounded-lg flex items-center justify-center">
+                  <span className="text-gray-500 text-sm">Файл</span>
+                </div>
+              )}
+              
               <button
-                type="button"
-                onClick={() => handleRemove(fileId)}
-                className="text-red-600 hover:text-red-700 text-sm"
+                onClick={() => removeFile(index)}
+                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
               >
-                Удалить
+                ×
               </button>
             </div>
           ))}
