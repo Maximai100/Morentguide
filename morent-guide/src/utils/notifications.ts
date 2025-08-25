@@ -70,7 +70,7 @@ export const subscribeToPushNotifications = async (): Promise<PushSubscription |
   if (!permission) return null;
 
   try {
-    const vapidKey = urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY || '');
+    const vapidKey = urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY || '') as unknown as ArrayBuffer;
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: vapidKey
