@@ -70,9 +70,10 @@ export const subscribeToPushNotifications = async (): Promise<PushSubscription |
   if (!permission) return null;
 
   try {
+    const vapidKey = urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY || '');
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY || '').buffer
+      applicationServerKey: vapidKey
     });
 
     console.log('Подписка на push-уведомления создана:', subscription);
