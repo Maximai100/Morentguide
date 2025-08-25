@@ -9,12 +9,13 @@ Type 'Uint8Array<ArrayBufferLike>' is not assignable to type 'string | BufferSou
 ```
 
 ### Решение
-Использовано свойство `.buffer` для получения `ArrayBuffer` из `Uint8Array`:
+Убрано использование `.buffer` для избежания проблем с `SharedArrayBuffer`. Используется прямой `Uint8Array`:
 
 ```typescript
+const vapidKey = urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY || '');
 const subscription = await registration.pushManager.subscribe({
   userVisibleOnly: true,
-  applicationServerKey: urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY || '').buffer
+  applicationServerKey: vapidKey
 });
 ```
 
@@ -57,7 +58,7 @@ npm run build:prod    # Продакшн сборка
 
 ## Выполненные действия
 
-1. ✅ **Исправлена ошибка TypeScript** - использовано свойство `.buffer` для получения `ArrayBuffer`
+1. ✅ **Исправлена ошибка TypeScript** - убрано использование `.buffer` для избежания `SharedArrayBuffer`
 2. ✅ **Добавлены переменные окружения** - `VITE_VAPID_PUBLIC_KEY` в `env.local` и `env.example`
 3. ✅ **Проверена локальная сборка** - `npm run build:prod` проходит успешно
 4. ✅ **Проверены типы** - `npm run type-check` без ошибок
