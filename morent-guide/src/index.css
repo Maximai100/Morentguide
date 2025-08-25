@@ -1,38 +1,75 @@
+/* Импорт шрифтов */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Кастомные CSS переменные для темной темы */
+/* Кастомные CSS переменные для строгого делового дизайна */
 :root {
-  --color-primary: #0e2a3b;
-  --color-primary-dark: #0a1f2b;
-  --color-secondary: #1e40af;
-  --color-accent: #3b82f6;
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
-  --color-text: #1f2937;
-  --color-text-light: #6b7280;
+  /* Основная цветовая палитра */
+  --color-primary: #1a365d;
+  --color-primary-dark: #0f2a4a;
+  --color-primary-light: #2d5a87;
+  --color-secondary: #2d3748;
+  --color-accent: #3182ce;
+  --color-accent-light: #4299e1;
+  
+  /* Семантические цвета */
+  --color-success: #38a169;
+  --color-warning: #d69e2e;
+  --color-error: #e53e3e;
+  --color-info: #3182ce;
+  
+  /* Нейтральные цвета */
+  --color-text: #1a202c;
+  --color-text-light: #4a5568;
+  --color-text-muted: #718096;
   --color-bg: #ffffff;
-  --color-bg-secondary: #f9fafb;
-  --color-border: #e5e7eb;
-  --color-shadow: rgba(0, 0, 0, 0.1);
+  --color-bg-secondary: #f7fafc;
+  --color-bg-tertiary: #edf2f7;
+  --color-border: #e2e8f0;
+  --color-border-light: #f1f5f9;
+  --color-shadow: rgba(0, 0, 0, 0.08);
+  --color-shadow-lg: rgba(0, 0, 0, 0.12);
+  
+  /* Размеры и отступы */
+  --border-radius: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .dark {
-  --color-primary: #0e2a3b;
-  --color-primary-dark: #0a1f2b;
-  --color-secondary: #3b82f6;
-  --color-accent: #60a5fa;
-  --color-success: #34d399;
-  --color-warning: #fbbf24;
-  --color-error: #f87171;
-  --color-text: #f9fafb;
-  --color-text-light: #d1d5db;
-  --color-bg: #111827;
-  --color-bg-secondary: #1f2937;
-  --color-border: #374151;
+  /* Темная тема */
+  --color-primary: #2d5a87;
+  --color-primary-dark: #1a365d;
+  --color-primary-light: #4299e1;
+  --color-secondary: #4a5568;
+  --color-accent: #4299e1;
+  --color-accent-light: #63b3ed;
+  
+  /* Семантические цвета */
+  --color-success: #48bb78;
+  --color-warning: #ed8936;
+  --color-error: #f56565;
+  --color-info: #4299e1;
+  
+  /* Нейтральные цвета */
+  --color-text: #f7fafc;
+  --color-text-light: #e2e8f0;
+  --color-text-muted: #a0aec0;
+  --color-bg: #1a202c;
+  --color-bg-secondary: #2d3748;
+  --color-bg-tertiary: #4a5568;
+  --color-border: #4a5568;
+  --color-border-light: #2d3748;
   --color-shadow: rgba(0, 0, 0, 0.3);
+  --color-shadow-lg: rgba(0, 0, 0, 0.4);
 }
 
 /* Базовые стили */
@@ -42,6 +79,7 @@
 
 html {
   scroll-behavior: smooth;
+  font-size: 16px;
 }
 
 body {
@@ -53,94 +91,220 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text);
   transition: background-color 0.3s ease, color 0.3s ease;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+/* Типографика */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--color-text);
+  margin-bottom: 0.5em;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+h6 { font-size: 1.125rem; }
+
+p {
+  margin-bottom: 1rem;
+  color: var(--color-text-light);
 }
 
 /* Кастомные компоненты */
 @layer components {
+  /* Кнопки */
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2.5 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
   .btn-primary {
-    @apply bg-[#0e2a3b] text-white px-4 py-2 rounded-lg hover:bg-[#0a1f2b] transition-colors duration-200 font-medium;
+    @apply bg-[#1a365d] text-white hover:bg-[#0f2a4a] focus:ring-[#1a365d] shadow-sm hover:shadow-md;
   }
   
   .btn-secondary {
-    @apply bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 font-medium;
+    @apply bg-white text-[#1a365d] border border-[#e2e8f0] hover:bg-[#f7fafc] focus:ring-[#1a365d] shadow-sm hover:shadow-md dark:bg-[#2d3748] dark:text-white dark:border-[#4a5568] dark:hover:bg-[#4a5568];
   }
 
   .btn-success {
-    @apply bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium;
+    @apply bg-[#38a169] text-white hover:bg-[#2f855a] focus:ring-[#38a169] shadow-sm hover:shadow-md;
   }
   
   .btn-danger {
-    @apply bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200 font-medium;
+    @apply bg-[#e53e3e] text-white hover:bg-[#c53030] focus:ring-[#e53e3e] shadow-sm hover:shadow-md;
   }
 
+  .btn-ghost {
+    @apply bg-transparent text-[#1a365d] hover:bg-[#f7fafc] focus:ring-[#1a365d] dark:text-white dark:hover:bg-[#2d3748];
+  }
+
+  .btn-sm {
+    @apply px-3 py-2 text-sm;
+  }
+
+  .btn-lg {
+    @apply px-6 py-3 text-lg;
+  }
+
+  /* Поля ввода */
   .input-field {
-    @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0e2a3b] focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400;
+    @apply w-full px-4 py-3 border border-[#e2e8f0] rounded-lg focus:ring-2 focus:ring-[#1a365d] focus:border-transparent bg-white text-[#1a202c] placeholder-[#718096] transition-all duration-200 dark:bg-[#2d3748] dark:border-[#4a5568] dark:text-white dark:placeholder-[#a0aec0];
   }
 
+  .input-field:focus {
+    @apply shadow-md;
+  }
+
+  /* Карточки */
   .card {
-    @apply bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700;
+    @apply bg-white rounded-xl shadow-sm border border-[#e2e8f0] overflow-hidden dark:bg-[#2d3748] dark:border-[#4a5568];
   }
 
   .card-header {
-    @apply px-6 py-4 border-b border-gray-200 dark:border-gray-700;
+    @apply px-6 py-4 border-b border-[#e2e8f0] bg-[#f7fafc] dark:border-[#4a5568] dark:bg-[#1a202c];
   }
 
   .card-body {
     @apply px-6 py-4;
   }
 
+  .card-footer {
+    @apply px-6 py-4 border-t border-[#e2e8f0] bg-[#f7fafc] dark:border-[#4a5568] dark:bg-[#1a202c];
+  }
+
+  /* Навигация */
   .nav-link {
-    @apply px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200;
+    @apply px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200;
   }
 
   .nav-link-active {
-    @apply bg-[#0e2a3b] text-white;
+    @apply bg-[#1a365d] text-white shadow-sm;
   }
 
   .nav-link-inactive {
-    @apply text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700;
+    @apply text-[#4a5568] hover:bg-[#f7fafc] hover:text-[#1a202c] dark:text-[#a0aec0] dark:hover:bg-[#2d3748] dark:hover:text-white;
   }
 
+  /* Бейджи */
   .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium;
   }
 
   .badge-primary {
-    @apply bg-[#0e2a3b] text-white;
+    @apply bg-[#1a365d] text-white;
   }
 
   .badge-success {
-    @apply bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200;
+    @apply bg-[#c6f6d5] text-[#22543d] dark:bg-[#22543d] dark:text-[#c6f6d5];
   }
 
   .badge-warning {
-    @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200;
+    @apply bg-[#fef5e7] text-[#744210] dark:bg-[#744210] dark:text-[#fef5e7];
   }
 
   .badge-error {
-    @apply bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200;
+    @apply bg-[#fed7d7] text-[#742a2a] dark:bg-[#742a2a] dark:text-[#fed7d7];
   }
 
+  .badge-info {
+    @apply bg-[#bee3f8] text-[#2a4365] dark:bg-[#2a4365] dark:text-[#bee3f8];
+  }
+
+  /* Скелетон */
   .skeleton {
-    @apply animate-pulse bg-gray-200 dark:bg-gray-700 rounded;
+    @apply animate-pulse bg-[#edf2f7] rounded dark:bg-[#4a5568];
   }
 
-  .gradient-morent {
-    background: linear-gradient(135deg, #0e2a3b 0%, #1e40af 100%);
+  /* Градиенты */
+  .gradient-primary {
+    background: linear-gradient(135deg, #1a365d 0%, #2d5a87 100%);
+  }
+
+  .gradient-accent {
+    background: linear-gradient(135deg, #3182ce 0%, #4299e1 100%);
   }
 
   .text-gradient {
-    background: linear-gradient(135deg, #0e2a3b 0%, #1e40af 100%);
+    background: linear-gradient(135deg, #1a365d 0%, #2d5a87 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  /* Таблицы */
+  .table {
+    @apply w-full border-collapse;
+  }
+
+  .table th {
+    @apply px-4 py-3 text-left text-sm font-semibold text-[#1a202c] bg-[#f7fafc] border-b border-[#e2e8f0] dark:text-white dark:bg-[#1a202c] dark:border-[#4a5568];
+  }
+
+  .table td {
+    @apply px-4 py-3 text-sm text-[#4a5568] border-b border-[#e2e8f0] dark:text-[#a0aec0] dark:border-[#4a5568];
+  }
+
+  .table tbody tr:hover {
+    @apply bg-[#f7fafc] dark:bg-[#2d3748];
+  }
+
+  /* Формы */
+  .form-group {
+    @apply mb-6;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium text-[#1a202c] mb-2 dark:text-white;
+  }
+
+  .form-error {
+    @apply text-[#e53e3e] text-sm mt-1;
+  }
+
+  .form-help {
+    @apply text-[#718096] text-sm mt-1 dark:text-[#a0aec0];
+  }
+
+  /* Модальные окна */
+  .modal-overlay {
+    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4;
+  }
+
+  .modal-content {
+    @apply bg-white rounded-xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto dark:bg-[#2d3748];
+  }
+
+  /* Уведомления */
+  .notification {
+    @apply fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm;
+  }
+
+  .notification-success {
+    @apply bg-[#38a169] text-white;
+  }
+
+  .notification-error {
+    @apply bg-[#e53e3e] text-white;
+  }
+
+  .notification-warning {
+    @apply bg-[#d69e2e] text-white;
+  }
+
+  .notification-info {
+    @apply bg-[#3182ce] text-white;
   }
 }
 
 /* Анимации */
 @layer utilities {
   .animate-fade-in {
-    animation: fadeIn 0.5s ease-in-out;
+    animation: fadeIn 0.3s ease-out;
   }
 
   .animate-slide-up {
@@ -148,21 +312,17 @@ body {
   }
 
   .animate-bounce-in {
-    animation: bounceIn 0.6s ease-out;
+    animation: bounceIn 0.5s ease-out;
   }
 
-  .animate-pulse-slow {
-    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  .animate-scale-in {
+    animation: scaleIn 0.2s ease-out;
   }
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideUp {
@@ -193,6 +353,17 @@ body {
   }
 }
 
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 /* Стили для PWA */
 @media (display-mode: standalone) {
   body {
@@ -207,12 +378,16 @@ body {
     padding-left: 1rem;
     padding-right: 1rem;
   }
+  
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: 1.5rem; }
 }
 
 /* Стили для скроллбара */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -221,11 +396,11 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: var(--color-border);
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-light);
+  background: var(--color-text-muted);
 }
 
 /* Стили для выделения текста */
@@ -264,219 +439,99 @@ body {
 }
 
 @keyframes loading {
-  0% {
-    left: -100%;
-  }
-  100% {
-    left: 100%;
-  }
-}
-
-/* Стили для уведомлений */
-.notification {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  z-index: 50;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 10px 15px -3px var(--color-shadow);
-  animation: slideInRight 0.3s ease-out;
-}
-
-.notification-success {
-  background-color: var(--color-success);
-  color: white;
-}
-
-.notification-error {
-  background-color: var(--color-error);
-  color: white;
-}
-
-.notification-warning {
-  background-color: var(--color-warning);
-  color: white;
-}
-
-.notification-info {
-  background-color: var(--color-accent);
-  color: white;
-}
-
-@keyframes slideInRight {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-/* Стили для модальных окон */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  animation: fadeIn 0.2s ease-out;
-}
-
-.modal-content {
-  background-color: var(--color-bg);
-  border-radius: 0.5rem;
-  box-shadow: 0 25px 50px -12px var(--color-shadow);
-  max-width: 90vw;
-  max-height: 90vh;
-  overflow-y: auto;
-  animation: slideUp 0.3s ease-out;
-}
-
-/* Стили для форм */
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.form-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: var(--color-text);
-}
-
-.form-error {
-  color: var(--color-error);
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-}
-
-.form-help {
-  color: var(--color-text-light);
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-}
-
-/* Стили для таблиц */
-.table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.table th,
-.table td {
-  padding: 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.table th {
-  background-color: var(--color-bg-secondary);
-  font-weight: 600;
-  color: var(--color-text);
-}
-
-.table tbody tr:hover {
-  background-color: var(--color-bg-secondary);
-}
-
-/* Стили для кнопок с иконками */
-.btn-icon {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
+  0% { left: -100%; }
+  100% { left: 100%; }
 }
 
 /* Стили для аватаров */
 .avatar {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
-  object-fit: cover;
+  @apply w-10 h-10 rounded-full object-cover;
 }
 
 .avatar-sm {
-  width: 2rem;
-  height: 2rem;
+  @apply w-8 h-8;
 }
 
 .avatar-lg {
-  width: 3rem;
-  height: 3rem;
+  @apply w-12 h-12;
 }
 
 /* Стили для статусов */
 .status {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  font-size: 0.75rem;
-  font-weight: 500;
+  @apply inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium;
 }
 
 .status-online {
-  background-color: var(--color-success);
-  color: white;
+  @apply bg-[#38a169] text-white;
 }
 
 .status-offline {
-  background-color: var(--color-text-light);
-  color: white;
+  @apply bg-[#718096] text-white;
 }
 
 .status-busy {
-  background-color: var(--color-warning);
-  color: white;
+  @apply bg-[#d69e2e] text-white;
 }
 
 /* Стили для прогресс-баров */
 .progress {
-  width: 100%;
-  height: 0.5rem;
-  background-color: var(--color-bg-secondary);
-  border-radius: 0.25rem;
-  overflow: hidden;
+  @apply w-full h-2 bg-[#edf2f7] rounded-full overflow-hidden dark:bg-[#4a5568];
 }
 
 .progress-bar {
-  height: 100%;
-  background-color: var(--color-accent);
-  transition: width 0.3s ease;
+  @apply h-full bg-[#3182ce] transition-all duration-300 ease-out;
 }
 
 /* Стили для тултипов */
 .tooltip {
-  position: relative;
-  display: inline-block;
+  @apply relative inline-block;
 }
 
 .tooltip .tooltip-text {
-  visibility: hidden;
-  width: 120px;
-  background-color: var(--color-text);
-  color: var(--color-bg);
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px;
-  position: absolute;
-  z-index: 1;
-  bottom: 125%;
-  left: 50%;
-  margin-left: -60px;
-  opacity: 0;
-  transition: opacity 0.3s;
+  @apply invisible w-32 bg-[#1a202c] text-white text-center rounded-lg py-2 px-3 text-sm absolute z-10 bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 transition-opacity duration-300;
 }
 
 .tooltip:hover .tooltip-text {
-  visibility: visible;
-  opacity: 1;
+  @apply visible opacity-100;
+}
+
+/* Стили для разделителей */
+.divider {
+  @apply border-t border-[#e2e8f0] my-6 dark:border-[#4a5568];
+}
+
+/* Стили для иконок */
+.icon {
+  @apply w-5 h-5;
+}
+
+.icon-sm {
+  @apply w-4 h-4;
+}
+
+.icon-lg {
+  @apply w-6 h-6;
+}
+
+/* Стили для лейблов */
+.label {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#edf2f7] text-[#4a5568] dark:bg-[#4a5568] dark:text-[#a0aec0];
+}
+
+/* Стили для счетчиков */
+.counter {
+  @apply inline-flex items-center justify-center w-6 h-6 text-xs font-medium bg-[#1a365d] text-white rounded-full;
+}
+
+/* Стили для индикаторов загрузки */
+.spinner {
+  @apply animate-spin rounded-full border-2 border-[#e2e8f0] border-t-[#1a365d] w-5 h-5;
+}
+
+.spinner-sm {
+  @apply w-4 h-4;
+}
+
+.spinner-lg {
+  @apply w-6 h-6;
 }

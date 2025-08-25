@@ -128,7 +128,10 @@ const AdminPage: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0e2a3b]"></div>
+        <div className="text-center">
+          <div className="spinner spinner-lg mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Загрузка данных...</p>
+        </div>
       </div>
     );
   }
@@ -140,33 +143,42 @@ const AdminPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div>
-              <h1 className="text-3xl font-heading font-bold text-gray-900 dark:text-white">
-                Morent Guide - Админ-панель
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                Morent Guide
               </h1>
               <p className="text-gray-600 dark:text-gray-400 mt-1">
-                Управление апартаментами и бронированиями
+                Панель управления апартаментами
               </p>
             </div>
             
             {/* Кнопки экспорта */}
-            <div className="flex space-x-2">
+            <div className="flex space-x-3">
               <button
                 onClick={() => handleExport('excel')}
-                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                className="btn btn-success btn-sm"
               >
-                📊 Excel
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span>Excel</span>
               </button>
               <button
                 onClick={() => handleExport('pdf')}
-                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                className="btn btn-danger btn-sm"
               >
-                📄 PDF
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span>PDF</span>
               </button>
               <button
                 onClick={() => handleExport('statistics')}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="btn btn-primary btn-sm"
               >
-                📈 Статистика
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                <span>Статистика</span>
               </button>
             </div>
           </div>
@@ -176,36 +188,41 @@ const AdminPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Навигационные вкладки */}
         <div className="mb-8">
-          <nav className="flex space-x-8">
+          <nav className="flex space-x-8 border-b border-gray-200 dark:border-gray-700">
             <button
               onClick={() => setActiveTab('apartments')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'apartments'
-                  ? 'border-[#0e2a3b] text-[#0e2a3b] dark:text-white'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              className={`nav-link ${
+                activeTab === 'apartments' ? 'nav-link-active' : 'nav-link-inactive'
               }`}
             >
-              🏠 Апартаменты ({apartments.length})
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+              Апартаменты
+              <span className="counter ml-2">{apartments.length}</span>
             </button>
             <button
               onClick={() => setActiveTab('bookings')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'bookings'
-                  ? 'border-[#0e2a3b] text-[#0e2a3b] dark:text-white'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              className={`nav-link ${
+                activeTab === 'bookings' ? 'nav-link-active' : 'nav-link-inactive'
               }`}
             >
-              📅 Бронирования ({bookings.length})
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Бронирования
+              <span className="counter ml-2">{bookings.length}</span>
             </button>
             <button
               onClick={() => setActiveTab('calendar')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'calendar'
-                  ? 'border-[#0e2a3b] text-[#0e2a3b] dark:text-white'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              className={`nav-link ${
+                activeTab === 'calendar' ? 'nav-link-active' : 'nav-link-inactive'
               }`}
             >
-              📊 Календарь
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              Календарь
             </button>
           </nav>
         </div>
@@ -214,39 +231,50 @@ const AdminPage: React.FC = () => {
         {activeTab === 'apartments' && (
           <div>
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-heading font-semibold text-gray-900 dark:text-white">
-                Апартаменты
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+                Управление апартаментами
               </h2>
-                  <button
+              <button
                 onClick={() => setShowApartmentForm(true)}
-                className="bg-[#0e2a3b] text-white px-4 py-2 rounded-lg hover:bg-[#0a1f2b] transition-colors"
-                  >
-                ➕ Добавить апартамент
-                  </button>
-                </div>
+                className="btn btn-primary"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Добавить апартамент
+              </button>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {apartments.map((apartment) => (
-                <div key={apartment.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    {apartment.title}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-4">
-                    {apartment.base_address}, корпус {apartment.building_number}
-                  </p>
-                  <div className="flex space-x-2">
-                    <button 
-                      onClick={() => handleEditApartment(apartment)}
-                      className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition-colors"
-                    >
-                      ✏️ Редактировать
-                    </button>
-                    <button 
-                      onClick={() => handleDeleteApartment(apartment.id)}
-                      className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors"
-                    >
-                      🗑️ Удалить
-                    </button>
+                <div key={apartment.id} className="card hover:shadow-lg transition-shadow duration-200">
+                  <div className="card-body">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                      {apartment.title}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm">
+                      {apartment.base_address}, корпус {apartment.building_number}
+                    </p>
+                    <div className="flex space-x-2">
+                      <button 
+                        onClick={() => handleEditApartment(apartment)}
+                        className="btn btn-secondary btn-sm"
+                      >
+                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        Редактировать
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteApartment(apartment.id)}
+                        className="btn btn-danger btn-sm"
+                      >
+                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Удалить
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -257,54 +285,47 @@ const AdminPage: React.FC = () => {
         {activeTab === 'bookings' && (
           <div>
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-heading font-semibold text-gray-900 dark:text-white">
-                Бронирования
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+                Управление бронированиями
               </h2>
-                  <button
+              <button
                 onClick={() => setShowBookingForm(true)}
-                className="bg-[#0e2a3b] text-white px-4 py-2 rounded-lg hover:bg-[#0a1f2b] transition-colors"
-                  >
-                ➕ Добавить бронирование
-                  </button>
-                </div>
+                className="btn btn-primary"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Добавить бронирование
+              </button>
+            </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+            <div className="card overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                  <thead className="bg-gray-50 dark:bg-gray-700">
+                <table className="table">
+                  <thead>
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                        Гость
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                        Апартамент
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                        Даты
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                        Ссылка
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                        Действия
-                      </th>
+                      <th>Гость</th>
+                      <th>Апартамент</th>
+                      <th>Даты</th>
+                      <th>Ссылка</th>
+                      <th>Действия</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                  <tbody>
                     {bookings.map((booking) => {
                       const apartment = apartments.find(apt => apt.id === booking.apartment_id);
                       return (
                         <tr key={booking.id} className={selectedBooking?.id === booking.id ? 'bg-blue-50 dark:bg-blue-900/20' : ''}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                          <td className="font-medium text-gray-900 dark:text-white">
                             {booking.guest_name}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                          <td className="text-gray-500 dark:text-gray-400">
                             {apartment?.title || 'Не указан'}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                          <td className="text-gray-500 dark:text-gray-400">
                             {booking.checkin_date} - {booking.checkout_date}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                          <td className="text-gray-500 dark:text-gray-400">
                             <a
                               href={`/booking/${booking.slug}`}
                               target="_blank"
@@ -314,7 +335,7 @@ const AdminPage: React.FC = () => {
                               Открыть
                             </a>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <td className="font-medium">
                             <div className="flex space-x-2">
                               <button
                                 onClick={() => handleEditBooking(booking)}
@@ -343,7 +364,7 @@ const AdminPage: React.FC = () => {
         {activeTab === 'calendar' && (
           <div>
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-heading font-semibold text-gray-900 dark:text-white">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
                 Календарь бронирований
               </h2>
             </div>
