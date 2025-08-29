@@ -19,6 +19,7 @@ const AdminPage: React.FC = () => {
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'apartments' | 'bookings' | 'calendar'>('apartments');
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
     loadData();
@@ -51,6 +52,7 @@ const AdminPage: React.FC = () => {
     setShowApartmentForm(false);
     setEditingApartment(undefined);
     showNotification('Апартамент сохранен', 'success');
+    setRefreshTrigger(prev => prev + 1);
   };
 
   const handleBookingSave = async (_booking: Booking | Omit<Booking, 'id'>) => {
@@ -58,6 +60,7 @@ const AdminPage: React.FC = () => {
     setShowBookingForm(false);
     setEditingBooking(undefined);
     showNotification('Бронирование сохранено', 'success');
+    setRefreshTrigger(prev => prev + 1);
   };
 
   const handleEditApartment = (apartment: Apartment) => {
@@ -76,6 +79,7 @@ const AdminPage: React.FC = () => {
         await apartmentApi.delete(id);
         await loadData();
         showNotification('Апартамент удален', 'success');
+        setRefreshTrigger(prev => prev + 1);
       } catch (error) {
         console.error('Ошибка удаления апартамента:', error);
         showNotification('Ошибка удаления апартамента', 'error');
@@ -89,6 +93,7 @@ const AdminPage: React.FC = () => {
         await bookingApi.delete(id);
         await loadData();
         showNotification('Бронирование удалено', 'success');
+        setRefreshTrigger(prev => prev + 1);
       } catch (error) {
         console.error('Ошибка удаления бронирования:', error);
         showNotification('Ошибка удаления бронирования', 'error');
@@ -246,39 +251,7 @@ const AdminPage: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {apartments.map((apartment) => (
-                <div key={apartment.id} className="card hover:shadow-lg transition-shadow duration-200">
-                  <div className="card-body">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                      {apartment.title}
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm">
-                      {apartment.base_address}, корпус {apartment.building_number}
-                    </p>
-                    <div className="flex space-x-2">
-                      <button 
-                        onClick={() => handleEditApartment(apartment)}
-                        className="btn btn-secondary btn-sm"
-                      >
-                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                        Редактировать
-                      </button>
-                      <button 
-                        onClick={() => handleDeleteApartment(apartment.id)}
-                        className="btn btn-danger btn-sm"
-                      >
-                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                        Удалить
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+              <ApartmentsList onEdit={handleEditApartment} onRefresh={() => setRefreshTrigger(prev => prev + 1)} refreshTrigger={refreshTrigger} />
           </div>
         )}
 
@@ -300,63 +273,7 @@ const AdminPage: React.FC = () => {
             </div>
 
             <div className="card overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>Гость</th>
-                      <th>Апартамент</th>
-                      <th>Даты</th>
-                      <th>Ссылка</th>
-                      <th>Действия</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {bookings.map((booking) => {
-                      const apartment = apartments.find(apt => apt.id === booking.apartment_id);
-                      return (
-                        <tr key={booking.id} className={selectedBooking?.id === booking.id ? 'bg-blue-50 dark:bg-blue-900/20' : ''}>
-                          <td className="font-medium text-gray-900 dark:text-white">
-                            {booking.guest_name}
-                          </td>
-                          <td className="text-gray-500 dark:text-gray-400">
-                            {apartment?.title || 'Не указан'}
-                          </td>
-                          <td className="text-gray-500 dark:text-gray-400">
-                            {booking.checkin_date} - {booking.checkout_date}
-                          </td>
-                          <td className="text-gray-500 dark:text-gray-400">
-                            <a
-                              href={`/booking/${booking.slug}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-[#0e2a3b] hover:underline"
-                            >
-                              Открыть
-                            </a>
-                          </td>
-                          <td className="font-medium">
-                            <div className="flex space-x-2">
-                              <button
-                                onClick={() => handleEditBooking(booking)}
-                                className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
-                              >
-                                ✏️
-                              </button>
-                    <button 
-                                onClick={() => handleDeleteBooking(booking.id)}
-                                className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                    >
-                                🗑️
-                    </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+              <BookingsList onEdit={handleEditBooking} onRefresh={() => setRefreshTrigger(prev => prev + 1)} refreshTrigger={refreshTrigger} />
             </div>
           </div>
         )}
