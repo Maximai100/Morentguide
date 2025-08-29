@@ -57,12 +57,24 @@ const AdminPage: React.FC = () => {
     setRefreshTrigger(prev => prev + 1);
   };
 
-  const handleBookingSave = async (_booking: Booking | Omit<Booking, 'id'>) => {
-    await loadData();
-    setShowBookingForm(false);
-    setEditingBooking(undefined);
-    showNotification('Бронирование сохранено', 'success');
-    setRefreshTrigger(prev => prev + 1);
+  const handleBookingSave = async (booking: Booking | Omit<Booking, 'id'>) => {
+    try {
+      if ('id' in booking && booking.id) {
+        // Update existing booking
+        await bookingApi.update(booking.id, booking);
+      } else {
+        // Create new booking
+        await bookingApi.create(booking);
+      }
+      await loadData();
+      setShowBookingForm(false);
+      setEditingBooking(undefined);
+      showNotification('Бронирование сохранено', 'success');
+      setRefreshTrigger(prev => prev + 1);
+    } catch (error) {
+      console.error('Ошибка сохранения бронирования:', error);
+      showNotification('Ошибка сохранения бронирования', 'error');
+    }
   };
 
   const handleEditApartment = (apartment: Apartment) => {
