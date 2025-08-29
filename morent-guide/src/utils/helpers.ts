@@ -106,59 +106,59 @@ export const showNotification = (message: string, type: 'success' | 'error' | 'i
 import type { Apartment, Booking } from '../types';
 
 // Валидация формы апартамента
-export const validateApartment = (data: Partial<Apartment>): { isValid: boolean; errors: string[] } => {
-  const errors: string[] = [];
-  
+export const validateApartment = (data: Partial<Apartment>): { isValid: boolean; errors: Record<string, string> } => {
+  const errors: Record<string, string> = {};
+
   if (!validateRequired(data.title)) {
-    errors.push('Название апартамента обязательно');
+    errors.title = 'Название апартамента обязательно';
   }
-  
+
   if (!validateRequired(data.apartment_number)) {
-    errors.push('Номер апартамента обязателен');
+    errors.apartment_number = 'Номер апартамента обязателен';
   }
-  
+
   if (!validateRequired(data.building_number)) {
-    errors.push('Номер корпуса обязателен');
+    errors.building_number = 'Номер корпуса обязателен';
   }
-  
+
   if (!validateRequired(data.base_address)) {
-    errors.push('Адрес обязателен');
+    errors.base_address = 'Адрес обязателен';
   }
-  
+
   if (!validateRequired(data.wifi_name)) {
-    errors.push('Название Wi-Fi обязательно');
+    errors.wifi_name = 'Название Wi-Fi обязательно';
   }
-  
+
   if (!validateRequired(data.wifi_password)) {
-    errors.push('Пароль Wi-Fi обязателен');
+    errors.wifi_password = 'Пароль Wi-Fi обязателен';
   }
-  
+
   if (!validateRequired(data.code_building)) {
-    errors.push('Код подъезда обязателен');
+    errors.code_building = 'Код подъезда обязателен';
   }
-  
+
   if (!validateRequired(data.code_lock)) {
-    errors.push('Код замка обязателен');
+    errors.code_lock = 'Код замка обязателен';
   }
-  
+
   if (!validateRequired(data.manager_name)) {
-    errors.push('Имя менеджера обязательно');
+    errors.manager_name = 'Имя менеджера обязательно';
   }
-  
+
   if (!data.manager_phone || !validateRequired(data.manager_phone)) {
-    errors.push('Телефон менеджера обязателен');
+    errors.manager_phone = 'Телефон менеджера обязателен';
   } else if (!isValidPhone(data.manager_phone)) {
-    errors.push('Неверный формат телефона');
+    errors.manager_phone = 'Неверный формат телефона';
   }
-  
+
   if (!data.manager_email || !validateRequired(data.manager_email)) {
-    errors.push('Email менеджера обязателен');
+    errors.manager_email = 'Email менеджера обязателен';
   } else if (!isValidEmail(data.manager_email)) {
-    errors.push('Неверный формат email');
+    errors.manager_email = 'Неверный формат email';
   }
-  
+
   return {
-    isValid: errors.length === 0,
+    isValid: Object.keys(errors).length === 0,
     errors
   };
 };

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import type { Apartment } from '../types';
 import { apartmentApi } from '../utils/api';
 import MediaUploader from './MediaUploader';
+import FormField from './FormField';
 import { validateApartment, showNotification } from '../utils/helpers';
 
 interface ApartmentFormProps {
@@ -33,7 +34,7 @@ const ApartmentForm: React.FC<ApartmentFormProps> = ({ apartment, onSave, onCanc
     manager_email: '',
   });
 
-  const [errors, setErrors] = useState<string[]>([]);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -44,10 +45,11 @@ const ApartmentForm: React.FC<ApartmentFormProps> = ({ apartment, onSave, onCanc
 
   const handleInputChange = (field: keyof Apartment, value: string | string[]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    // Очищаем ошибки при изменении поля
-    if (errors.length > 0) {
-      setErrors([]);
-    }
+    setErrors(prev => { // Clear error for this field
+      const newErrors = { ...prev };
+      delete newErrors[field as string]; // Cast to string as keyof Apartment can be symbol/number
+      return newErrors;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -92,88 +94,64 @@ const ApartmentForm: React.FC<ApartmentFormProps> = ({ apartment, onSave, onCanc
         </h2>
       </div>
 
-      {/* Отображение ошибок */}
-      {errors.length > 0 && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <h3 className="text-red-800 font-semibold mb-2">Ошибки в форме:</h3>
-          <ul className="list-disc list-inside text-red-700 space-y-1">
-            {errors.map((error, index) => (
-              <li key={index}>{error}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+      
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Основная информация */}
         <div className="card-enhanced p-6">
           <h3 className="text-lg font-semibold mb-4">Основная информация</h3>
           <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Название апартамента *
-              </label>
-              <input
-                type="text"
-                value={formData.title || ''}
-                onChange={(e) => handleInputChange('title', e.target.value)}
-                className="input-field"
-                placeholder="Например: Апартаменты Морент"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Номер апартамента *
-              </label>
-              <input
-                type="text"
-                value={formData.apartment_number || ''}
-                onChange={(e) => handleInputChange('apartment_number', e.target.value)}
-                className="input-field"
-                placeholder="101"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Номер корпуса *
-              </label>
-              <input
-                type="text"
-                value={formData.building_number || ''}
-                onChange={(e) => handleInputChange('building_number', e.target.value)}
-                className="input-field"
-                placeholder="А"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Базовый адрес *
-              </label>
-              <input
-                type="text"
-                value={formData.base_address || ''}
-                onChange={(e) => handleInputChange('base_address', e.target.value)}
-                className="input-field"
-                placeholder="Нагорный тупик 13"
-                required
-              />
-            </div>
-          </div>
-          <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Описание
-            </label>
-            <textarea
-              value={formData.description || ''}
-              onChange={(e) => handleInputChange('description', e.target.value)}
-              className="input-field"
-              rows={3}
-              placeholder="Описание апартаментов..."
+            <FormField
+              label="Название апартамента *"
+              name="title"
+              type="text"
+              value={formData.title || ''}
+              onChange={(e) => handleInputChange('title', e.target.value)}
+              placeholder="Например: Апартаменты Морент"
+              required
+              error={errors.title}
+            />
+            <FormField
+              label="Номер апартамента *"
+              name="apartment_number"
+              type="text"
+              value={formData.apartment_number || ''}
+              onChange={(e) => handleInputChange('apartment_number', e.target.value)}
+              placeholder="101"
+              required
+              error={errors.apartment_number}
+            />
+            <FormField
+              label="Номер корпуса *"
+              name="building_number"
+              type="text"
+              value={formData.building_number || ''}
+              onChange={(e) => handleInputChange('building_number', e.target.value)}
+              placeholder="А"
+              required
+              error={errors.building_number}
+            />
+            <FormField
+              label="Базовый адрес *"
+              name="base_address"
+              type="text"
+              value={formData.base_address || ''}
+              onChange={(e) => handleInputChange('base_address', e.target.value)}
+              placeholder="Нагорный тупик 13"
+              required
+              error={errors.base_address}
             />
           </div>
+          <FormField
+            label="Описание"
+            name="description"
+            type="textarea"
+            value={formData.description || ''}
+            onChange={(e) => handleInputChange('description', e.target.value)}
+            rows={3}
+            placeholder="Описание апартаментов..."
+            error={errors.description}
+          />
         </div>
 
         {/* Медиа файлы */}
@@ -225,58 +203,46 @@ const ApartmentForm: React.FC<ApartmentFormProps> = ({ apartment, onSave, onCanc
         <div className="card-enhanced p-6">
           <h3 className="text-lg font-semibold mb-4">Доступ</h3>
           <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Название Wi-Fi *
-              </label>
-              <input
-                type="text"
-                value={formData.wifi_name || ''}
-                onChange={(e) => handleInputChange('wifi_name', e.target.value)}
-                className="input-field"
-                placeholder="WiFi_Morent"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Пароль Wi-Fi *
-              </label>
-              <input
-                type="text"
-                value={formData.wifi_password || ''}
-                onChange={(e) => handleInputChange('wifi_password', e.target.value)}
-                className="input-field"
-                placeholder="123Morent"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Код подъезда *
-              </label>
-              <input
-                type="text"
-                value={formData.code_building || ''}
-                onChange={(e) => handleInputChange('code_building', e.target.value)}
-                className="input-field"
-                placeholder="#2020"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Код замка *
-              </label>
-              <input
-                type="text"
-                value={formData.code_lock || ''}
-                onChange={(e) => handleInputChange('code_lock', e.target.value)}
-                className="input-field"
-                placeholder="#101"
-                required
-              />
-            </div>
+            <FormField
+              label="Название Wi-Fi *"
+              name="wifi_name"
+              type="text"
+              value={formData.wifi_name || ''}
+              onChange={(e) => handleInputChange('wifi_name', e.target.value)}
+              placeholder="WiFi_Morent"
+              required
+              error={errors.wifi_name}
+            />
+            <FormField
+              label="Пароль Wi-Fi *"
+              name="wifi_password"
+              type="text"
+              value={formData.wifi_password || ''}
+              onChange={(e) => handleInputChange('wifi_password', e.target.value)}
+              placeholder="123Morent"
+              required
+              error={errors.wifi_password}
+            />
+            <FormField
+              label="Код подъезда *"
+              name="code_building"
+              type="text"
+              value={formData.code_building || ''}
+              onChange={(e) => handleInputChange('code_building', e.target.value)}
+              placeholder="#2020"
+              required
+              error={errors.code_building}
+            />
+            <FormField
+              label="Код замка *"
+              name="code_lock"
+              type="text"
+              value={formData.code_lock || ''}
+              onChange={(e) => handleInputChange('code_lock', e.target.value)}
+              placeholder="#101"
+              required
+              error={errors.code_lock}
+            />
           </div>
         </div>
 
@@ -284,105 +250,88 @@ const ApartmentForm: React.FC<ApartmentFormProps> = ({ apartment, onSave, onCanc
         <div className="card-enhanced p-6">
           <h3 className="text-lg font-semibold mb-4">Часто задаваемые вопросы</h3>
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                FAQ по заселению
-              </label>
-              <textarea
-                value={formData.faq_checkin || ''}
-                onChange={(e) => handleInputChange('faq_checkin', e.target.value)}
-                className="input-field"
-                rows={4}
-                placeholder="Инструкции по заселению..."
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                FAQ по апартаментам
-              </label>
-              <textarea
-                value={formData.faq_apartment || ''}
-                onChange={(e) => handleInputChange('faq_apartment', e.target.value)}
-                className="input-field"
-                rows={4}
-                placeholder="Информация об апартаментах..."
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                FAQ по району
-              </label>
-              <textarea
-                value={formData.faq_area || ''}
-                onChange={(e) => handleInputChange('faq_area', e.target.value)}
-                className="input-field"
-                rows={4}
-                placeholder="Информация о районе..."
-              />
-            </div>
+            <FormField
+              label="FAQ по заселению"
+              name="faq_checkin"
+              type="textarea"
+              value={formData.faq_checkin || ''}
+              onChange={(e) => handleInputChange('faq_checkin', e.target.value)}
+              rows={4}
+              placeholder="Инструкции по заселению..."
+              error={errors.faq_checkin}
+            />
+            <FormField
+              label="FAQ по апартаментам"
+              name="faq_apartment"
+              type="textarea"
+              value={formData.faq_apartment || ''}
+              onChange={(e) => handleInputChange('faq_apartment', e.target.value)}
+              rows={4}
+              placeholder="Информация об апартаментах..."
+              error={errors.faq_apartment}
+            />
+            <FormField
+              label="FAQ по району"
+              name="faq_area"
+              type="textarea"
+              value={formData.faq_area || ''}
+              onChange={(e) => handleInputChange('faq_area', e.target.value)}
+              rows={4}
+              placeholder="Информация о районе..."
+              error={errors.faq_area}
+            />
           </div>
         </div>
 
         {/* Карта */}
         <div className="card-enhanced p-6">
           <h3 className="text-lg font-semibold mb-4">Карта</h3>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Код вставки Яндекс.Карт
-            </label>
-            <textarea
-              value={formData.map_embed_code || ''}
-              onChange={(e) => handleInputChange('map_embed_code', e.target.value)}
-              className="input-field"
-              rows={3}
-              placeholder='<iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A123456789&amp;source=constructor" width="100%" height="400" frameborder="0"></iframe>'
-            />
-          </div>
+          <FormField
+            label="Код вставки Яндекс.Карт"
+            name="map_embed_code"
+            type="textarea"
+            value={formData.map_embed_code || ''}
+            onChange={(e) => handleInputChange('map_embed_code', e.target.value)}
+            rows={3}
+            placeholder='<iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A123456789&amp;source=constructor" width="100%" height="400" frameborder="0"></iframe>'
+            error={errors.map_embed_code}
+          />
         </div>
 
         {/* Контакты менеджера */}
         <div className="card-enhanced p-6">
           <h3 className="text-lg font-semibold mb-4">Контакты менеджера</h3>
           <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Имя менеджера *
-              </label>
-              <input
-                type="text"
-                value={formData.manager_name || ''}
-                onChange={(e) => handleInputChange('manager_name', e.target.value)}
-                className="input-field"
-                placeholder="Менеджер Морент"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Телефон *
-              </label>
-              <input
-                type="tel"
-                value={formData.manager_phone || ''}
-                onChange={(e) => handleInputChange('manager_phone', e.target.value)}
-                className="input-field"
-                placeholder="88007005501"
-                required
-              />
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email *
-              </label>
-              <input
-                type="email"
-                value={formData.manager_email || ''}
-                onChange={(e) => handleInputChange('manager_email', e.target.value)}
-                className="input-field"
-                placeholder="morent@mail.ru"
-                required
-              />
-            </div>
+            <FormField
+              label="Имя менеджера *"
+              name="manager_name"
+              type="text"
+              value={formData.manager_name || ''}
+              onChange={(e) => handleInputChange('manager_name', e.target.value)}
+              placeholder="Менеджер Морент"
+              required
+              error={errors.manager_name}
+            />
+            <FormField
+              label="Телефон *"
+              name="manager_phone"
+              type="tel"
+              value={formData.manager_phone || ''}
+              onChange={(e) => handleInputChange('manager_phone', e.target.value)}
+              placeholder="88007005501"
+              required
+              error={errors.manager_phone}
+            />
+            <FormField
+              label="Email *"
+              name="manager_email"
+              type="email"
+              value={formData.manager_email || ''}
+              onChange={(e) => handleInputChange('manager_email', e.target.value)}
+              placeholder="morent@mail.ru"
+              required
+              error={errors.manager_email}
+            />
           </div>
         </div>
 

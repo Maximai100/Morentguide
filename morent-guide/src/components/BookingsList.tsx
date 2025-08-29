@@ -97,13 +97,7 @@ const BookingsList: React.FC<BookingsListProps> = ({
   if (bookings.length === 0) {
     return (
       <div className="card-simple p-8 text-center">
-        <p className="text-gray-500">Ошибка загрузки данных</p>
-        <button
-          onClick={loadBookings}
-          className="btn-primary mt-4"
-        >
-          Попробовать снова
-        </button>
+        <p className="text-gray-500">Нет доступных бронирований. Добавьте новое бронирование, чтобы начать.</p>
       </div>
     );
   }

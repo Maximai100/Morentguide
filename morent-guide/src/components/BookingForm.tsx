@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { Booking, Apartment } from '../types';
 import { apartmentApi } from '../utils/api';
+import FormField from './FormField';
 
 interface BookingFormProps {
   booking?: Booking;
@@ -17,7 +18,6 @@ const BookingForm: React.FC<BookingFormProps> = ({
 }) => {
   const [apartments, setApartments] = useState<Apartment[]>([]);
 
-  
   const [formData, setFormData] = useState<Omit<Booking, 'id'>>({
     guest_name: booking?.guest_name || '',
     checkin_date: booking?.checkin_date || '',
@@ -25,6 +25,8 @@ const BookingForm: React.FC<BookingFormProps> = ({
     apartment_id: booking?.apartment_id || '',
     slug: booking?.slug || '',
   });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     loadApartments();
@@ -41,8 +43,40 @@ const BookingForm: React.FC<BookingFormProps> = ({
     }
   };
 
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.guest_name) {
+      newErrors.guest_name = 'Имя гостя обязательно.';
+    }
+    if (!formData.apartment_id) {
+      newErrors.apartment_id = 'Апартамент обязателен.';
+    }
+    if (!formData.checkin_date) {
+      newErrors.checkin_date = 'Дата заезда обязательна.';
+    }
+    if (!formData.checkout_date) {
+      newErrors.checkout_date = 'Дата выезда обязательна.';
+    }
+
+    // Date validation
+    if (formData.checkin_date && formData.checkout_date) {
+      const checkin = new Date(formData.checkin_date);
+      const checkout = new Date(formData.checkout_date);
+      if (checkin >= checkout) {
+        newErrors.checkout_date = 'Дата выезда должна быть позже даты заезда.';
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return; // Stop submission if validation fails
+    }
     
     try {
       const dataToSave = booking 
@@ -56,9 +90,14 @@ const BookingForm: React.FC<BookingFormProps> = ({
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    setErrors(prev => { // Clear error for this field
+      const newErrors = { ...prev };
+      delete newErrors[name];
+      return newErrors;
+    });
   };
 
   const generateNewLink = () => {
@@ -83,68 +122,50 @@ const BookingForm: React.FC<BookingFormProps> = ({
       </h3>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Имя гостя
-          </label>
-          <input
-            type="text"
-            name="guest_name"
-            value={formData.guest_name}
-            onChange={handleInputChange}
-            className="input-simple"
-            required
-          />
-        </div>
+        <FormField
+          label="Имя гостя"
+          name="guest_name"
+          type="text"
+          value={formData.guest_name}
+          onChange={handleInputChange}
+          required
+          error={errors.guest_name}
+        />
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Апартамент
-          </label>
-          <select
-            name="apartment_id"
-            value={formData.apartment_id}
-            onChange={handleInputChange}
-            className="input-simple"
-            required
-          >
-            <option value="">Выберите апартамент</option>
-            {apartments.map(apt => (
-              <option key={apt.id} value={apt.id}>
-                {apt.title} - Корп. {apt.building_number}, Кв. {apt.apartment_number}
-              </option>
-            ))}
-          </select>
-        </div>
+        <FormField
+          label="Апартамент"
+          name="apartment_id"
+          type="select"
+          value={formData.apartment_id}
+          onChange={handleInputChange}
+          required
+          options={apartments.map(apt => ({
+            value: apt.id,
+            label: `${apt.title} - Корп. ${apt.building_number}, Кв. ${apt.apartment_number}`
+          }))}
+          error={errors.apartment_id}
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Дата заезда
-            </label>
-            <input
-              type="date"
-              name="checkin_date"
-              value={formData.checkin_date}
-              onChange={handleInputChange}
-              className="input-simple"
-              required
-            />
-          </div>
+          <FormField
+            label="Дата заезда"
+            name="checkin_date"
+            type="date"
+            value={formData.checkin_date}
+            onChange={handleInputChange}
+            required
+            error={errors.checkin_date}
+          />
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Дата выезда
-            </label>
-            <input
-              type="date"
-              name="checkout_date"
-              value={formData.checkout_date}
-              onChange={handleInputChange}
-              className="input-simple"
-              required
-            />
-          </div>
+          <FormField
+            label="Дата выезда"
+            name="checkout_date"
+            type="date"
+            value={formData.checkout_date}
+            onChange={handleInputChange}
+            required
+            error={errors.checkout_date}
+          />
         </div>
 
         {/* Ссылка для гостя */}

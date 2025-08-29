@@ -79,13 +79,7 @@ const ApartmentsList: React.FC<ApartmentsListProps> = ({
   if (apartments.length === 0) {
     return (
       <div className="card-simple p-8 text-center">
-        <p className="text-gray-500 mb-4">Ошибка загрузки апартаментов</p>
-        <button 
-          onClick={loadApartments}
-          className="btn-primary"
-        >
-          Попробовать снова
-          </button>
+        <p className="text-gray-500 mb-4">Нет доступных апартаментов. Добавьте новый апартамент, чтобы начать.</p>
       </div>
     );
   }
