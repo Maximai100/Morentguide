@@ -18,7 +18,7 @@ const AdminPage: React.FC = () => {
 
   const [editingApartment, setEditingApartment] = useState<Apartment | undefined>(undefined);
   const [editingBooking, setEditingBooking] = useState<Booking | undefined>(undefined);
-  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'apartments' | 'bookings' | 'calendar'>('apartments');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -75,34 +75,6 @@ const AdminPage: React.FC = () => {
     setShowBookingForm(true);
   };
 
-  const handleDeleteApartment = async (id: string) => {
-    if (confirm('Вы уверены, что хотите удалить этот апартамент?')) {
-      try {
-        await apartmentApi.delete(id);
-        await loadData();
-        showNotification('Апартамент удален', 'success');
-        setRefreshTrigger(prev => prev + 1);
-      } catch (error) {
-        console.error('Ошибка удаления апартамента:', error);
-        showNotification('Ошибка удаления апартамента', 'error');
-      }
-    }
-  };
-
-  const handleDeleteBooking = async (id: string) => {
-    if (confirm('Вы уверены, что хотите удалить это бронирование?')) {
-      try {
-        await bookingApi.delete(id);
-        await loadData();
-        showNotification('Бронирование удалено', 'success');
-        setRefreshTrigger(prev => prev + 1);
-      } catch (error) {
-        console.error('Ошибка удаления бронирования:', error);
-        showNotification('Ошибка удаления бронирования', 'error');
-      }
-    }
-  };
-
   const handleExport = async (format: 'excel' | 'pdf' | 'statistics') => {
     try {
       const data = { bookings, apartments };
@@ -127,8 +99,7 @@ const AdminPage: React.FC = () => {
     }
   };
 
-  const handleBookingSelect = (booking: Booking) => {
-    setSelectedBooking(booking);
+  const handleBookingSelect = (_booking: Booking) => {
     setActiveTab('bookings');
   };
 
