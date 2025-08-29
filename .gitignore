@@ -90,4 +90,4 @@ tmp/
 temp/
 
 # Directus specific
-directus/ 
+directus/ morent-guide/pnpm-lock.yaml

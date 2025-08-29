@@ -42,7 +42,7 @@ const ApartmentForm: React.FC<ApartmentFormProps> = ({ apartment, onSave, onCanc
     }
   }, [apartment]);
 
-  const handleInputChange = (field: keyof Apartment, value: any) => {
+  const handleInputChange = (field: keyof Apartment, value: string | string[]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     // Очищаем ошибки при изменении поля
     if (errors.length > 0) {

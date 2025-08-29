@@ -28,7 +28,7 @@ export const testDirectusAPI = async () => {
     console.error('❌ Ошибка при тестировании API:', error);
     
     if (error && typeof error === 'object' && 'response' in error) {
-      const axiosError = error as any;
+      const axiosError = error as { response?: { status: number; data: unknown } };
       console.error('Статус:', axiosError.response?.status);
       console.error('Данные:', axiosError.response?.data);
     }

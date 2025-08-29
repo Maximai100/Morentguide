@@ -6,7 +6,7 @@ export interface NotificationData {
   icon?: string;
   badge?: string;
   tag?: string;
-  data?: any;
+  data?: unknown;
   actions?: Array<{
     action: string;
     title: string;

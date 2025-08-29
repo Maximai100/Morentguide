@@ -155,7 +155,7 @@ export const loadReminders = (): Reminder[] => {
     const saved = localStorage.getItem('morent-reminders');
     if (saved) {
       const reminders = JSON.parse(saved);
-      return reminders.map((reminder: any) => ({
+      return reminders.map((reminder: Reminder) => ({
         ...reminder,
         scheduledDate: new Date(reminder.scheduledDate),
         createdAt: new Date(reminder.createdAt)

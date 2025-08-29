@@ -225,12 +225,12 @@ const BookingPage: React.FC = () => {
                         <p><strong>Пароль:</strong> {apartment.wifi_password || 'Не указан'}</p>
                       </div>
                     </div>
-                                         {(apartment as any).video_instructions && (
+                                         {(apartment as Apartment & { video_instructions: string }).video_instructions && (
                        <div>
                          <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Видео-инструкция</h3>
                          <div className="aspect-w-16 aspect-h-9">
                            <iframe
-                             src={(apartment as any).video_instructions}
+                             src={(apartment as Apartment & { video_instructions: string }).video_instructions}
                              title="Видео-инструкция"
                              className="w-full h-64 rounded-lg"
                              frameBorder="0"

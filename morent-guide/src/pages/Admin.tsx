@@ -28,7 +28,7 @@ const AdminPage: React.FC = () => {
     const stopScheduler = startReminderScheduler(bookings, apartments);
     
     return () => stopScheduler();
-  }, []);
+  }, [apartments, bookings]);
 
   const loadData = async () => {
     try {

@@ -8,7 +8,7 @@ export const isValidEmail = (email: string): boolean => {
 
 // Валидация телефона
 export const isValidPhone = (phone: string): boolean => {
-  const phoneRegex = /^[\+]?[0-9\s\-\(\)]{10,}$/;
+  const phoneRegex = /^[+]?[0-9\s-()]{10,}$/;
   return phoneRegex.test(phone);
 };
 
@@ -103,8 +103,10 @@ export const showNotification = (message: string, type: 'success' | 'error' | 'i
   }, 3000);
 };
 
+import type { Apartment, Booking } from '../types';
+
 // Валидация формы апартамента
-export const validateApartment = (data: any): { isValid: boolean; errors: string[] } => {
+export const validateApartment = (data: Partial<Apartment>): { isValid: boolean; errors: string[] } => {
   const errors: string[] = [];
   
   if (!validateRequired(data.title)) {
@@ -162,7 +164,7 @@ export const validateApartment = (data: any): { isValid: boolean; errors: string
 };
 
 // Валидация формы бронирования
-export const validateBooking = (data: any): { isValid: boolean; errors: string[] } => {
+export const validateBooking = (data: Partial<Booking>): { isValid: boolean; errors: string[] } => {
   const errors: string[] = [];
   
   if (!validateRequired(data.guest_name)) {
