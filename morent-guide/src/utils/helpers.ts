@@ -145,13 +145,13 @@ export const validateApartment = (data: Partial<Apartment>): { isValid: boolean;
     errors.push('Имя менеджера обязательно');
   }
   
-  if (!validateRequired(data.manager_phone)) {
+  if (!data.manager_phone || !validateRequired(data.manager_phone)) {
     errors.push('Телефон менеджера обязателен');
   } else if (!isValidPhone(data.manager_phone)) {
     errors.push('Неверный формат телефона');
   }
   
-  if (!validateRequired(data.manager_email)) {
+  if (!data.manager_email || !validateRequired(data.manager_email)) {
     errors.push('Email менеджера обязателен');
   } else if (!isValidEmail(data.manager_email)) {
     errors.push('Неверный формат email');
@@ -171,13 +171,13 @@ export const validateBooking = (data: Partial<Booking>): { isValid: boolean; err
     errors.push('Имя гостя обязательно');
   }
   
-  if (!validateRequired(data.checkin_date)) {
+  if (!data.checkin_date || !validateRequired(data.checkin_date)) {
     errors.push('Дата заезда обязательна');
   } else if (!isValidDate(data.checkin_date)) {
     errors.push('Неверный формат даты заезда');
   }
   
-  if (!validateRequired(data.checkout_date)) {
+  if (!data.checkout_date || !validateRequired(data.checkout_date)) {
     errors.push('Дата выезда обязательна');
   } else if (!isValidDate(data.checkout_date)) {
     errors.push('Неверный формат даты выезда');

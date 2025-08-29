@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { bookingApi } from '../utils/api';
 import { showNotification } from '../utils/helpers';
 import Navigation from '../components/Navigation';
-import type { BookingPageData } from '../types';
+import type { BookingPageData, Apartment } from '../types';
 
 const BookingPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
