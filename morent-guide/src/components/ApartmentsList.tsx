@@ -121,7 +121,7 @@ const ApartmentsList: React.FC<ApartmentsListProps> = ({
 
   if (loading) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className="text-center py-8 text-slate-500 dark:text-slate-400">
         Загрузка апартаментов...
       </div>
     );
@@ -131,12 +131,12 @@ const ApartmentsList: React.FC<ApartmentsListProps> = ({
     return (
       <div className="card-simple p-6 text-center">
         <p className="text-red-600 mb-4">{error}</p>
-          <button 
-            onClick={loadApartments}
-          className="btn-primary"
-          >
+        <button 
+          onClick={loadApartments}
+          className="btn btn-primary"
+        >
           Попробовать снова
-          </button>
+        </button>
       </div>
     );
   }
@@ -144,7 +144,7 @@ const ApartmentsList: React.FC<ApartmentsListProps> = ({
   if (apartments.length === 0) {
     return (
       <div className="card-simple p-8 text-center">
-        <p className="text-gray-500 mb-4">Нет доступных апартаментов. Добавьте новый апартамент, чтобы начать.</p>
+        <p className="text-slate-500 dark:text-slate-400 mb-4">Нет доступных апартаментов. Добавьте новый апартамент, чтобы начать.</p>
       </div>
     );
   }
@@ -155,7 +155,7 @@ const ApartmentsList: React.FC<ApartmentsListProps> = ({
         <div key={apartment.id} className="card-enhanced group animate-fade-in">
           <div className="card-body">
             <div className="flex justify-between items-start mb-4">
-              <h3 className="text-lg font-heading font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              <h3 className="text-lg font-heading font-bold text-slate-900 dark:text-slate-100 group-hover:text-morent-coral dark:group-hover:text-morent-coral transition-colors">
                 {apartment.title}
               </h3>
               
@@ -169,7 +169,7 @@ const ApartmentsList: React.FC<ApartmentsListProps> = ({
             
             <div className="space-y-3">
               <div className="flex items-start gap-2">
-                <svg className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-slate-400 dark:text-slate-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
@@ -180,7 +180,7 @@ const ApartmentsList: React.FC<ApartmentsListProps> = ({
               
               {apartment.wifi_name && (
                 <div className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-slate-400 dark:text-slate-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
                   </svg>
                   <span className="text-sm text-slate-600 dark:text-slate-300">
@@ -191,7 +191,7 @@ const ApartmentsList: React.FC<ApartmentsListProps> = ({
               
               {apartment.code_building && (
                 <div className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-slate-400 dark:text-slate-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
                   <span className="text-sm text-slate-600 dark:text-slate-300">
@@ -202,7 +202,7 @@ const ApartmentsList: React.FC<ApartmentsListProps> = ({
               
               {apartment.manager_name && (
                 <div className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-slate-400 dark:text-slate-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                   <span className="text-sm text-slate-600 dark:text-slate-300">

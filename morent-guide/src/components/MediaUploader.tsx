@@ -63,7 +63,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
         />
         <label
           htmlFor="file-upload"
-          className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+          className="btn btn-secondary cursor-pointer"
         >
           {isUploading ? 'Загрузка...' : label}
         </label>
@@ -86,8 +86,8 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                   controls
                 />
               ) : (
-                <div className="w-full h-24 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <span className="text-gray-500 text-sm">Файл</span>
+                <div className="w-full h-24 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center">
+                  <span className="text-slate-500 dark:text-slate-400 text-sm">Файл</span>
                 </div>
               )}
               

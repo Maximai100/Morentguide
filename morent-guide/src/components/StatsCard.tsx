@@ -23,22 +23,22 @@ const StatsCard: React.FC<StatsCardProps> = ({
       <div className="card-body">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
               {title}
             </p>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+            <p className="text-2xl font-heading font-bold text-slate-900 dark:text-slate-100 mt-1">
               {value}
             </p>
             {trend && (
               <div className="flex items-center mt-2">
                 <span className={`text-sm font-medium ${
-                  trend.isPositive ? 'text-green-600' : 'text-red-600'
+                  trend.isPositive ? 'text-emerald-600' : 'text-red-600'
                 }`}>
                   {trend.isPositive ? '+' : ''}{trend.value}%
                 </span>
                 <svg 
                   className={`w-4 h-4 ml-1 ${
-                    trend.isPositive ? 'text-green-600' : 'text-red-600'
+                    trend.isPositive ? 'text-emerald-600' : 'text-red-600'
                   }`} 
                   fill="none" 
                   stroke="currentColor" 

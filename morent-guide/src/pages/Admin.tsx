@@ -87,16 +87,12 @@ const AdminPage: React.FC = () => {
     setShowBookingForm(true);
   };
 
-
-
-
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
         <div className="text-center">
           <div className="spinner spinner-lg mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Загрузка данных...</p>
+          <p className="text-slate-600 dark:text-slate-400">Загрузка данных...</p>
         </div>
       </div>
     );
@@ -109,15 +105,13 @@ const AdminPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-8">
             <div className="animate-fade-in">
-              <h1 className="text-display text-4xl font-black bg-gradient-to-r from-slate-900 to-blue-600 bg-clip-text text-transparent dark:from-slate-100 dark:to-blue-400">
+              <h1 className="text-display text-4xl font-black bg-gradient-to-r from-morent-navy to-morent-coral bg-clip-text text-transparent dark:from-slate-100 dark:to-morent-coral">
                 Morent Guide
               </h1>
               <p className="text-slate-600 dark:text-slate-400 mt-2 font-medium">
                 Премиум панель управления апартаментами
               </p>
             </div>
-            
-
           </div>
         </div>
       </div>
@@ -150,7 +144,6 @@ const AdminPage: React.FC = () => {
               <span>Бронирования</span>
               <span className="counter">{bookings.length}</span>
             </button>
-
           </nav>
         </div>
 
@@ -210,8 +203,6 @@ const AdminPage: React.FC = () => {
             </div>
           </div>
         )}
-
-
 
         {/* Улучшенные модальные окна */}
         {showApartmentForm && (

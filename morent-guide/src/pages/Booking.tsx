@@ -35,14 +35,14 @@ const BookingPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-900 dark:to-slate-800">
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-4xl mx-auto">
             {/* Skeleton для заголовка */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+            <div className="card-enhanced p-6 mb-6">
               <div className="animate-pulse">
-                <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+                <div className="h-8 bg-slate-200 dark:bg-slate-700 rounded w-3/4 mb-4"></div>
+                <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/2"></div>
               </div>
             </div>
             
@@ -50,13 +50,13 @@ const BookingPage: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-6">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                  <div key={i} className="card-enhanced p-6">
                     <div className="animate-pulse">
-                      <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-4"></div>
+                      <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded w-1/3 mb-4"></div>
                       <div className="space-y-2">
-                        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6"></div>
-                        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-4/6"></div>
+                        <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                        <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-5/6"></div>
+                        <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-4/6"></div>
                       </div>
                     </div>
                   </div>
@@ -65,12 +65,12 @@ const BookingPage: React.FC = () => {
               
               <div className="space-y-6">
                 {[1, 2].map((i) => (
-                  <div key={i} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                  <div key={i} className="card-enhanced p-6">
                     <div className="animate-pulse">
-                      <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-4"></div>
+                      <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded w-1/2 mb-4"></div>
                       <div className="space-y-2">
-                        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                        <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                        <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4"></div>
                       </div>
                     </div>
                   </div>
@@ -85,17 +85,17 @@ const BookingPage: React.FC = () => {
 
   if (error || !bookingData || !bookingData.booking || !bookingData.apartment) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          <h1 className="text-4xl font-heading font-bold text-slate-900 dark:text-slate-100 mb-4">
             😕 Ошибка загрузки
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
+          <p className="text-xl text-slate-600 dark:text-slate-400 mb-8">
             {error || 'Бронирование не найдено'}
           </p>
           <a 
             href="/admin" 
-            className="inline-block bg-[#0e2a3b] text-white px-6 py-3 rounded-lg hover:bg-[#0a1f2b] transition-colors"
+            className="btn btn-primary"
           >
             Перейти в админ-панель
           </a>
@@ -120,14 +120,14 @@ const BookingPage: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Улучшенный заголовок */}
-          <div className="card-enhanced p-8 mb-8 text-center animate-bounce-in">
-            <div className="text-6xl mb-4 animate-float">🎉</div>
-            <h1 className="text-display text-4xl font-black bg-gradient-to-r from-slate-900 to-blue-600 bg-clip-text text-transparent dark:from-slate-100 dark:to-blue-400 mb-4">
+          <div className="card-enhanced p-8 mb-8 text-center animate-fade-in">
+            <div className="text-6xl mb-4">🎉</div>
+            <h1 className="text-display text-4xl font-black bg-gradient-to-r from-morent-navy to-morent-coral bg-clip-text text-transparent dark:from-slate-100 dark:to-morent-coral mb-4">
               Добро пожаловать, {booking.guest_name}!
             </h1>
             <div className="space-y-2">
               <p className="text-slate-600 dark:text-slate-300 text-lg">
-                Ваши апартаменты: <span className="font-bold text-blue-600 dark:text-blue-400">{apartment.title}</span>
+                Ваши апартаменты: <span className="font-bold text-morent-coral">{apartment.title}</span>
               </p>
               <p className="text-slate-600 dark:text-slate-300">
                 <span className="font-semibold">Даты пребывания:</span> {booking.checkin_date} — {booking.checkout_date}
@@ -145,7 +145,7 @@ const BookingPage: React.FC = () => {
                     onClick={() => setActiveSection(section.id)}
                     className={`flex-shrink-0 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 ${
                       activeSection === section.id
-                        ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-colored'
+                        ? 'bg-gradient-to-r from-morent-coral to-morent-coral-dark text-white shadow-colored'
                         : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 hover:scale-105'
                     }`}
                   >
@@ -172,7 +172,7 @@ const BookingPage: React.FC = () => {
                   <div className="card-body space-y-6">
                     <div className="animate-slide-in-left">
                       <h3 className="font-bold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2">
-                        <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                        <span className="w-2 h-2 bg-morent-coral rounded-full"></span>
                         Описание
                       </h3>
                       <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -181,7 +181,7 @@ const BookingPage: React.FC = () => {
                     </div>
                     <div className="animate-slide-in-right">
                       <h3 className="font-bold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2">
-                        <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                        <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
                         Адрес
                       </h3>
                       <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4">
@@ -196,107 +196,107 @@ const BookingPage: React.FC = () => {
 
               {/* Фото */}
               {activeSection === 'photos' && (
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-                  <h2 className="text-2xl font-heading font-semibold mb-4 text-gray-900 dark:text-white">
+                <div className="card-enhanced p-6">
+                  <h2 className="text-2xl font-heading font-semibold mb-4 text-slate-900 dark:text-slate-100">
                     📸 Фотографии
                   </h2>
-                                     {apartment.photos && Array.isArray(apartment.photos) && apartment.photos.length > 0 ? (
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                       {apartment.photos.map((photo: string, index: number) => (
-                         <div key={index} className="aspect-w-16 aspect-h-9">
-                           <img
-                             src={photo}
-                             alt={`Фото апартамента ${index + 1}`}
-                             className="w-full h-48 object-cover rounded-lg"
-                           />
-                         </div>
-                       ))}
-                     </div>
-                   ) : (
-                     <p className="text-gray-500 dark:text-gray-400">Фотографии будут добавлены позже.</p>
-                   )}
+                  {apartment.photos && Array.isArray(apartment.photos) && apartment.photos.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {apartment.photos.map((photo: string, index: number) => (
+                        <div key={index} className="aspect-w-16 aspect-h-9">
+                          <img
+                            src={photo}
+                            alt={`Фото апартамента ${index + 1}`}
+                            className="w-full h-48 object-cover rounded-lg"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-slate-500 dark:text-slate-400">Фотографии будут добавлены позже.</p>
+                  )}
                 </div>
               )}
 
               {/* Инструкции */}
               {activeSection === 'instructions' && (
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-                  <h2 className="text-2xl font-heading font-semibold mb-4 text-gray-900 dark:text-white">
+                <div className="card-enhanced p-6">
+                  <h2 className="text-2xl font-heading font-semibold mb-4 text-slate-900 dark:text-slate-100">
                     📋 Инструкции по заселению
                   </h2>
                   <div className="space-y-4">
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Доступ к апартаментам</h3>
-                      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 space-y-2">
+                      <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">Доступ к апартаментам</h3>
+                      <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 space-y-2">
                         <p><strong>Код подъезда:</strong> {apartment.code_building || 'Не указан'}</p>
                         <p><strong>Код замка:</strong> {apartment.code_lock || 'Не указан'}</p>
                       </div>
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Wi-Fi</h3>
-                      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 space-y-2">
+                      <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">Wi-Fi</h3>
+                      <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 space-y-2">
                         <p><strong>Название сети:</strong> {apartment.wifi_name || 'Не указано'}</p>
                         <p><strong>Пароль:</strong> {apartment.wifi_password || 'Не указан'}</p>
                       </div>
                     </div>
-                                         {(apartment as Apartment & { video_instructions: string }).video_instructions && (
-                       <div>
-                         <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Видео-инструкция</h3>
-                         <div className="aspect-w-16 aspect-h-9">
-                           <iframe
-                             src={(apartment as Apartment & { video_instructions: string }).video_instructions}
-                             title="Видео-инструкция"
-                             className="w-full h-64 rounded-lg"
-                             frameBorder="0"
-                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                             allowFullScreen
-                           ></iframe>
-                         </div>
-                       </div>
-            )}
-          </div>
+                    {(apartment as Apartment & { video_instructions: string }).video_instructions && (
+                      <div>
+                        <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">Видео-инструкция</h3>
+                        <div className="aspect-w-16 aspect-h-9">
+                          <iframe
+                            src={(apartment as Apartment & { video_instructions: string }).video_instructions}
+                            title="Видео-инструкция"
+                            className="w-full h-64 rounded-lg"
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          ></iframe>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
 
               {/* FAQ */}
               {activeSection === 'faq' && (
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-                  <h2 className="text-2xl font-heading font-semibold mb-4 text-gray-900 dark:text-white">
+                <div className="card-enhanced p-6">
+                  <h2 className="text-2xl font-heading font-semibold mb-4 text-slate-900 dark:text-slate-100">
                     ❓ Часто задаваемые вопросы
                   </h2>
-            <div className="space-y-4">
-                    <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
-                      <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Во сколько можно заехать?</h3>
-                      <p className="text-gray-700 dark:text-gray-300">Заезд возможен с 14:00. При необходимости раннего заезда свяжитесь с менеджером.</p>
+                  <div className="space-y-4">
+                    <div className="border-b border-slate-200 dark:border-slate-700 pb-4">
+                      <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">Во сколько можно заехать?</h3>
+                      <p className="text-slate-700 dark:text-slate-300">Заезд возможен с 14:00. При необходимости раннего заезда свяжитесь с менеджером.</p>
                     </div>
-                    <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
-                      <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Во сколько нужно выехать?</h3>
-                      <p className="text-gray-700 dark:text-gray-300">Выезд до 12:00. При необходимости позднего выезда свяжитесь с менеджером.</p>
+                    <div className="border-b border-slate-200 dark:border-slate-700 pb-4">
+                      <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">Во сколько нужно выехать?</h3>
+                      <p className="text-slate-700 dark:text-slate-300">Выезд до 12:00. При необходимости позднего выезда свяжитесь с менеджером.</p>
                     </div>
-                    <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
-                      <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Что делать с ключами при выезде?</h3>
-                      <p className="text-gray-700 dark:text-gray-300">Оставьте ключи в апартаментах и закройте дверь.</p>
-              </div>
+                    <div className="border-b border-slate-200 dark:border-slate-700 pb-4">
+                      <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">Что делать с ключами при выезде?</h3>
+                      <p className="text-slate-700 dark:text-slate-300">Оставьте ключи в апартаментах и закройте дверь.</p>
+                    </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Что делать в случае проблем?</h3>
-                      <p className="text-gray-700 dark:text-gray-300">Свяжитесь с менеджером по указанным контактам.</p>
-              </div>
-            </div>
-          </div>
+                      <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">Что делать в случае проблем?</h3>
+                      <p className="text-slate-700 dark:text-slate-300">Свяжитесь с менеджером по указанным контактам.</p>
+                    </div>
+                  </div>
+                </div>
               )}
 
               {/* Контакты */}
               {activeSection === 'contacts' && (
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-                  <h2 className="text-2xl font-heading font-semibold mb-4 text-gray-900 dark:text-white">
+                <div className="card-enhanced p-6">
+                  <h2 className="text-2xl font-heading font-semibold mb-4 text-slate-900 dark:text-slate-100">
                     📞 Контакты менеджера
                   </h2>
-            <div className="space-y-4">
-                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                      <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{apartment.manager_name}</h3>
+                  <div className="space-y-4">
+                    <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                      <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">{apartment.manager_name}</h3>
                       <div className="space-y-2">
-                        <p><strong>Телефон:</strong> <a href={`tel:${apartment.manager_phone}`} className="text-[#0e2a3b] hover:underline">{apartment.manager_phone}</a></p>
-                        <p><strong>Email:</strong> <a href={`mailto:${apartment.manager_email}`} className="text-[#0e2a3b] hover:underline">{apartment.manager_email}</a></p>
+                        <p><strong>Телефон:</strong> <a href={`tel:${apartment.manager_phone}`} className="text-morent-navy hover:underline dark:text-morent-coral">{apartment.manager_phone}</a></p>
+                        <p><strong>Email:</strong> <a href={`mailto:${apartment.manager_email}`} className="text-morent-navy hover:underline dark:text-morent-coral">{apartment.manager_email}</a></p>
                       </div>
                     </div>
                     <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
@@ -320,8 +320,8 @@ const BookingPage: React.FC = () => {
             {/* Боковая панель (только для десктопа) */}
             <div className="hidden lg:block space-y-6">
               {/* Навигация */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-                <h3 className="text-lg font-heading font-semibold mb-4 text-gray-900 dark:text-white">
+              <div className="card-enhanced p-6">
+                <h3 className="text-lg font-heading font-semibold mb-4 text-slate-900 dark:text-slate-100">
                   Навигация
                 </h3>
                 <div className="space-y-2">
@@ -331,8 +331,8 @@ const BookingPage: React.FC = () => {
                       onClick={() => setActiveSection(section.id)}
                       className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                         activeSection === section.id
-                          ? 'bg-[#0e2a3b] text-white'
-                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                          ? 'bg-morent-navy text-white'
+                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
                       }`}
                     >
                       <span className="mr-2">{section.icon}</span>
@@ -343,28 +343,28 @@ const BookingPage: React.FC = () => {
               </div>
 
               {/* Быстрые действия */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-                <h3 className="text-lg font-heading font-semibold mb-4 text-gray-900 dark:text-white">
+              <div className="card-enhanced p-6">
+                <h3 className="text-lg font-heading font-semibold mb-4 text-slate-900 dark:text-slate-100">
                   Быстрые действия
                 </h3>
                 <div className="space-y-3">
                   <button
                     onClick={() => setActiveSection('navigation')}
-                    className="w-full bg-[#0e2a3b] text-white py-2 px-4 rounded-lg hover:bg-[#0a1f2b] transition-colors flex items-center justify-center space-x-2"
+                    className="w-full btn btn-primary flex items-center justify-center space-x-2"
                   >
                     <span>🗺️</span>
                     <span>Построить маршрут</span>
                   </button>
                   <a
                     href={`tel:${apartment.manager_phone}`}
-                    className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2"
+                    className="w-full btn btn-success flex items-center justify-center space-x-2"
                   >
                     <span>📞</span>
                     <span>Позвонить менеджеру</span>
                   </a>
                   <a
                     href={`mailto:${apartment.manager_email}`}
-                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
+                    className="w-full btn btn-secondary flex items-center justify-center space-x-2"
                   >
                     <span>✉️</span>
                     <span>Написать email</span>

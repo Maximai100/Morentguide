@@ -1,69 +1,107 @@
 import React, { useState, useEffect } from 'react';
-import type { Booking, Apartment } from '../types';
-import { apartmentApi } from '../utils/api';
 import FormField from './FormField';
+import type { Booking, Apartment } from '../types';
+import { bookingApi, apartmentApi } from '../utils/api';
 
 interface BookingFormProps {
   booking?: Booking;
-  onSave: (booking: Omit<Booking, 'id'> | Booking) => Promise<void>;
+  onSave: (booking: Booking) => void;
   onCancel: () => void;
-  isLoading?: boolean;
 }
 
 const BookingForm: React.FC<BookingFormProps> = ({
   booking,
   onSave,
-  onCancel,
-  isLoading = false
+  onCancel
 }) => {
-  const [apartments, setApartments] = useState<Apartment[]>([]);
-
-  const [formData, setFormData] = useState<Omit<Booking, 'id'>>({
-    guest_name: booking?.guest_name || '',
-    checkin_date: booking?.checkin_date || '',
-    checkout_date: booking?.checkout_date || '',
-    apartment_id: booking?.apartment_id || '',
-    slug: booking?.slug || '',
+  const [formData, setFormData] = useState<Partial<Booking>>({
+    guest_name: '',
+    checkin_date: '',
+    checkout_date: '',
+    apartment_id: '',
+    slug: ''
   });
 
+  const [apartments, setApartments] = useState<Apartment[]>([]);
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     loadApartments();
-  }, []);
-
-
+    if (booking) {
+      setFormData(booking);
+    }
+  }, [booking]);
 
   const loadApartments = async () => {
     try {
       const data = await apartmentApi.getAll();
       setApartments(data);
-    } catch (err) {
-      console.error('Error loading apartments:', err);
+    } catch (error) {
+      console.error('Error loading apartments:', error);
+    }
+  };
+
+  const handleInputChange = (name: string, value: string | number) => {
+    setFormData(prev => ({ ...prev, [name]: value }));
+    // Очищаем ошибку для этого поля
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const generateSlug = (guestName: string) => {
+    if (!guestName.trim()) return '';
+    return guestName.toLowerCase()
+      .replace(/[^a-zа-яё\s]/g, '')
+      .replace(/\s+/g, '.')
+      .trim() + '.' + Date.now();
+  };
+
+  const handleGuestNameChange = (value: string) => {
+    handleInputChange('guest_name', value);
+    // Автоматически генерируем slug при изменении имени гостя
+    if (value.trim()) {
+      const newSlug = generateSlug(value);
+      setFormData(prev => ({ ...prev, slug: newSlug }));
     }
   };
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
-    if (!formData.guest_name) {
-      newErrors.guest_name = 'Имя гостя обязательно.';
-    }
-    if (!formData.apartment_id) {
-      newErrors.apartment_id = 'Апартамент обязателен.';
-    }
-    if (!formData.checkin_date) {
-      newErrors.checkin_date = 'Дата заезда обязательна.';
-    }
-    if (!formData.checkout_date) {
-      newErrors.checkout_date = 'Дата выезда обязательна.';
+
+    if (!formData.guest_name?.trim()) {
+      newErrors.guest_name = 'Имя гостя обязательно';
     }
 
-    // Date validation
+    if (!formData.checkin_date) {
+      newErrors.checkin_date = 'Дата заезда обязательна';
+    }
+
+    if (!formData.checkout_date) {
+      newErrors.checkout_date = 'Дата выезда обязательна';
+    }
+
+    if (!formData.apartment_id) {
+      newErrors.apartment_id = 'Выберите апартамент';
+    }
+
+    // Проверяем, что дата выезда позже даты заезда
     if (formData.checkin_date && formData.checkout_date) {
       const checkin = new Date(formData.checkin_date);
       const checkout = new Date(formData.checkout_date);
-      if (checkin >= checkout) {
-        newErrors.checkout_date = 'Дата выезда должна быть позже даты заезда.';
+      if (checkout <= checkin) {
+        newErrors.checkout_date = 'Дата выезда должна быть позже даты заезда';
+      }
+    }
+
+    // Проверяем, что дата заезда не в прошлом
+    if (formData.checkin_date) {
+      const checkin = new Date(formData.checkin_date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (checkin < today) {
+        newErrors.checkin_date = 'Дата заезда не может быть в прошлом';
       }
     }
 
@@ -73,156 +111,154 @@ const BookingForm: React.FC<BookingFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!validateForm()) {
-      return; // Stop submission if validation fails
-    }
     
+    if (!validateForm()) {
+      return;
+    }
+
+    setLoading(true);
     try {
-      const dataToSave = booking 
-        ? { ...formData, id: booking.id }
-        : formData;
-      
-      await onSave(dataToSave);
+      let savedBooking: Booking;
+
+      if (booking?.id) {
+        // Обновление существующего
+        savedBooking = await bookingApi.update(booking.id, formData as Booking);
+      } else {
+        // Создание нового
+        savedBooking = await bookingApi.create(formData as Omit<Booking, 'id'>);
+      }
+
+      onSave(savedBooking);
     } catch (error) {
       console.error('Error saving booking:', error);
-      alert('Ошибка при сохранении бронирования');
+      setErrors({ submit: 'Ошибка при сохранении бронирования' });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    setErrors(prev => { // Clear error for this field
-      const newErrors = { ...prev };
-      delete newErrors[name];
-      return newErrors;
-    });
-  };
-
-  const generateNewLink = () => {
-    const slug = `${formData.guest_name.toLowerCase().replace(/\s+/g, '.')}.${Date.now()}`;
-    setFormData(prev => ({ ...prev, slug }));
-
-  };
-
-  const copyLink = () => {
-    const origin = window.location.origin;
-    const base = import.meta.env.BASE_URL || '/';
-    const baseNormalized = base.endsWith('/') ? base.slice(0, -1) : base;
-    const fullLink = `${origin}${baseNormalized}/booking/${encodeURIComponent(formData.slug)}`;
-    navigator.clipboard.writeText(fullLink);
-    alert('Ссылка скопирована!');
-  };
+  const isEditing = !!booking?.id;
 
   return (
-    <div className="card-simple p-6">
-      <h3 className="text-xl font-heading font-semibold mb-6">
-        {booking ? 'Редактировать бронирование' : 'Создать новое бронирование'}
-      </h3>
+    <div className="p-6">
+      <div className="mb-6">
+        <h2 className="text-2xl font-heading font-bold text-slate-900 dark:text-slate-100 mb-2">
+          {isEditing ? 'Редактировать бронирование' : 'Добавить бронирование'}
+        </h2>
+        <p className="text-slate-600 dark:text-slate-400">
+          {isEditing ? 'Внесите изменения в информацию о бронировании' : 'Заполните информацию о новом бронировании'}
+        </p>
+      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <FormField
-          label="Имя гостя"
-          name="guest_name"
-          type="text"
-          value={formData.guest_name}
-          onChange={handleInputChange}
-          required
-          error={errors.guest_name}
-        />
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Основная информация */}
+        <div className="card-simple p-6">
+          <h3 className="text-lg font-heading font-semibold text-slate-900 dark:text-slate-100 mb-4">
+            Информация о госте
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              label="Имя гостя"
+              name="guest_name"
+              value={formData.guest_name || ''}
+              onChange={handleGuestNameChange}
+              placeholder="Имя и фамилия гостя"
+              required
+              error={errors.guest_name}
+            />
+            
+            <FormField
+              label="Ссылка (slug)"
+              name="slug"
+              value={formData.slug || ''}
+              onChange={(value) => handleInputChange('slug', value)}
+              placeholder="Автоматически генерируется"
+              help="Уникальная ссылка для доступа к информации о бронировании"
+            />
+          </div>
+        </div>
 
-        <FormField
-          label="Апартамент"
-          name="apartment_id"
-          type="select"
-          value={formData.apartment_id}
-          onChange={handleInputChange}
-          required
-          options={apartments.map(apt => ({
-            value: apt.id,
-            label: `${apt.title} - Корп. ${apt.building_number}, Кв. ${apt.apartment_number}`
-          }))}
-          error={errors.apartment_id}
-        />
+        {/* Даты */}
+        <div className="card-simple p-6">
+          <h3 className="text-lg font-heading font-semibold text-slate-900 dark:text-slate-100 mb-4">
+            Даты пребывания
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              label="Дата заезда"
+              name="checkin_date"
+              type="date"
+              value={formData.checkin_date || ''}
+              onChange={(value) => handleInputChange('checkin_date', value)}
+              required
+              error={errors.checkin_date}
+            />
+            
+            <FormField
+              label="Дата выезда"
+              name="checkout_date"
+              type="date"
+              value={formData.checkout_date || ''}
+              onChange={(value) => handleInputChange('checkout_date', value)}
+              required
+              error={errors.checkout_date}
+            />
+          </div>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Апартамент */}
+        <div className="card-simple p-6">
+          <h3 className="text-lg font-heading font-semibold text-slate-900 dark:text-slate-100 mb-4">
+            Выбор апартамента
+          </h3>
           <FormField
-            label="Дата заезда"
-            name="checkin_date"
-            type="date"
-            value={formData.checkin_date}
-            onChange={handleInputChange}
+            label="Апартамент"
+            name="apartment_id"
+            type="select"
+            value={formData.apartment_id || ''}
+            onChange={(value) => handleInputChange('apartment_id', value)}
             required
-            error={errors.checkin_date}
-          />
-
-          <FormField
-            label="Дата выезда"
-            name="checkout_date"
-            type="date"
-            value={formData.checkout_date}
-            onChange={handleInputChange}
-            required
-            error={errors.checkout_date}
+            error={errors.apartment_id}
+            options={apartments.map(apt => ({
+              value: apt.id,
+              label: `${apt.title} - ${apt.base_address}, корп. ${apt.building_number}, кв. ${apt.apartment_number}`
+            }))}
           />
         </div>
 
-        {/* Ссылка для гостя */}
-        <div className="border-t pt-4">
-          <h4 className="text-sm font-heading font-medium text-gray-700 mb-2">Ссылка для гостя</h4>
-          
-          {!formData.slug ? (
-            <button
-              type="button"
-              onClick={generateNewLink}
-              className="btn-secondary btn-mobile"
-            >
-              Создать бронирование и сгенерировать ссылку
-            </button>
-          ) : (
-            <div className="space-y-2">
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                <input
-                  type="text"
-                  readOnly
-                  value={`${window.location.origin}${(import.meta.env.BASE_URL || '/').replace(/\/$/, '')}/booking/${formData.slug}`}
-                  className="input-link flex-1"
-                />
-                <button
-                  type="button"
-                  onClick={copyLink}
-                  className="btn-secondary btn-mobile"
-                >
-                  Копировать
-                </button>
-              </div>
-              
-              {!booking && (
-                <p className="text-sm text-green-600">
-                  ✓ Ссылка создана! Сначала создайте бронирование
-                </p>
-              )}
-            </div>
-          )}
-        </div>
+        {/* Ошибка отправки */}
+        {errors.submit && (
+          <div className="card-simple p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+            <p className="text-red-600 dark:text-red-400 text-sm">
+              {errors.submit}
+            </p>
+          </div>
+        )}
 
         {/* Кнопки */}
-        <div className="flex justify-end space-x-4 pt-4">
+        <div className="flex flex-col sm:flex-row gap-3 justify-end">
           <button
             type="button"
             onClick={onCancel}
-            className="btn-secondary"
-            disabled={isLoading}
+            className="btn btn-secondary"
+            disabled={loading}
           >
             Отмена
           </button>
+          
           <button
             type="submit"
-            className="btn-primary"
-            disabled={isLoading || (!booking && !formData.slug)}
+            className="btn btn-primary"
+            disabled={loading}
           >
-            {isLoading ? 'Сохранение...' : (booking ? 'Сохранить' : 'Создать')}
+            {loading ? (
+              <div className="flex items-center gap-2">
+                <div className="spinner spinner-sm"></div>
+                <span>Сохранение...</span>
+              </div>
+            ) : (
+              <span>{isEditing ? 'Сохранить изменения' : 'Добавить бронирование'}</span>
+            )}
           </button>
         </div>
       </form>

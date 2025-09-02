@@ -12,14 +12,14 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, title = 'Галер
   if (!photos || photos.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-500">Фотографии не загружены</p>
+        <p className="text-slate-500 dark:text-slate-400">Фотографии не загружены</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">{title}</h3>
+      <h3 className="text-lg font-heading font-semibold text-slate-900 dark:text-slate-100">{title}</h3>
       
       {/* Горизонтальный скролл фотографий */}
       <div className="overflow-x-auto">
@@ -39,7 +39,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, title = 'Галер
                 }}
               />
               <div className="mt-2 text-center">
-                <span className="text-sm text-gray-600">Фото {index + 1}</span>
+                <span className="text-sm text-slate-600 dark:text-slate-400">Фото {index + 1}</span>
               </div>
             </div>
           ))}
@@ -55,7 +55,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, title = 'Галер
           <div className="relative max-w-4xl max-h-full p-4">
             <button
               onClick={() => setSelectedPhoto(null)}
-              className="absolute top-4 right-4 text-white text-2xl hover:text-gray-300 z-10"
+              className="absolute top-4 right-4 text-white text-2xl hover:text-slate-300 z-10"
             >
               ✕
             </button>

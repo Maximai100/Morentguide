@@ -4,15 +4,13 @@ import React from 'react';
 interface FormFieldProps {
   label: string;
   name: string;
-  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'textarea' | 'select' | 'date';
-  value?: string | number;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'textarea' | 'select';
+  value: string | number;
+  onChange: (value: string | number) => void;
   placeholder?: string;
-  error?: string;
-  help?: string;
   required?: boolean;
-  disabled?: boolean;
-  options?: Array<{ value: string; label: string }>;
+  error?: string;
+  options?: { value: string; label: string }[];
   rows?: number;
   className?: string;
 }
@@ -24,45 +22,41 @@ const FormField: React.FC<FormFieldProps> = ({
   value,
   onChange,
   placeholder,
-  error,
-  help,
   required = false,
-  disabled = false,
+  error,
   options = [],
   rows = 3,
   className = ''
 }) => {
-  const inputId = `field-${name}`;
-  const errorId = `error-${name}`;
-  const helpId = `help-${name}`;
+  const fieldId = `field-${name}`;
+  const hasError = !!error;
 
-  const renderInput = () => {
-    const commonProps = {
-      id: inputId,
-      name,
-      value,
-      onChange,
-      placeholder,
-      disabled,
-      required,
-      className: `input-field ${error ? 'border-red-500 focus:ring-red-500' : ''} ${className}`,
-      'aria-describedby': error ? errorId : help ? helpId : undefined,
-      'aria-invalid': error ? 'true' as const : 'false' as const
-    };
-
+  const renderField = () => {
     switch (type) {
       case 'textarea':
         return (
           <textarea
-            {...commonProps}
+            id={fieldId}
+            name={name}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={placeholder}
+            required={required}
             rows={rows}
-            className={`input-field resize-none ${error ? 'border-red-500 focus:ring-red-500' : ''} ${className}`}
+            className={`form-input ${hasError ? 'form-input-error' : ''}`}
           />
         );
 
       case 'select':
         return (
-          <select {...commonProps}>
+          <select
+            id={fieldId}
+            name={name}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            required={required}
+            className={`form-select ${hasError ? 'form-select-error' : ''}`}
+          >
             <option value="">Выберите...</option>
             {options.map((option) => (
               <option key={option.value} value={option.value}>
@@ -73,29 +67,34 @@ const FormField: React.FC<FormFieldProps> = ({
         );
 
       default:
-        return <input {...commonProps} type={type} />;
+        return (
+          <input
+            id={fieldId}
+            name={name}
+            type={type}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={placeholder}
+            required={required}
+            className={`form-input ${hasError ? 'form-input-error' : ''}`}
+          />
+        );
     }
   };
 
   return (
-    <div className="form-group">
-      <label htmlFor={inputId} className="form-label">
+    <div className={`form-field ${className}`}>
+      <label htmlFor={fieldId} className="form-label">
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className="form-required">*</span>}
       </label>
       
-      {renderInput()}
+      {renderField()}
       
-      {error && (
-        <div id={errorId} className="form-error">
+      {hasError && (
+        <p className="form-error">
           {error}
-        </div>
-      )}
-      
-      {help && !error && (
-        <div id={helpId} className="form-help">
-          {help}
-        </div>
+        </p>
       )}
     </div>
   );

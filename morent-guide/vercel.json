@@ -1,0 +1,8 @@
+{
+  "buildCommand": "cd morent-guide && npm install && npm run build",
+  "outputDirectory": "morent-guide/dist",
+  "framework": "vite",
+  "installCommand": "cd morent-guide && npm install",
+  "devCommand": "cd morent-guide && npm run dev",
+  "regions": ["iad1"]
+}

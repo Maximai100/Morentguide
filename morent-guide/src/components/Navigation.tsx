@@ -59,8 +59,8 @@ const Navigation: React.FC<NavigationProps> = ({ apartment, className = '' }) =>
   return (
     <div className={`card ${className}`}>
       <div className="card-header">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-          <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <h3 className="text-lg font-heading font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+          <svg className="w-5 h-5 text-morent-coral" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m-6 3l6-3" />
           </svg>
           Навигация
@@ -69,19 +69,19 @@ const Navigation: React.FC<NavigationProps> = ({ apartment, className = '' }) =>
       
       <div className="card-body space-y-6">
         {/* Адрес */}
-        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
-          <h4 className="font-medium text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+          <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2">
+            <svg className="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
             Адрес апартаментов
           </h4>
           <div className="space-y-1">
-            <p className="text-gray-700 dark:text-gray-300 font-medium">
+            <p className="text-slate-700 dark:text-slate-300 font-medium">
               {apartment.base_address}
             </p>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
+            <p className="text-slate-600 dark:text-slate-400 text-sm">
               Корпус {apartment.building_number}, апартамент {apartment.apartment_number}
             </p>
           </div>
@@ -113,7 +113,7 @@ const Navigation: React.FC<NavigationProps> = ({ apartment, className = '' }) =>
         {/* Выбор карт (для десктопа) */}
         {isExpanded && (
           <div className="space-y-2 animate-fade-in">
-            <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+            <div className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
               Выберите карты:
             </div>
             <button
