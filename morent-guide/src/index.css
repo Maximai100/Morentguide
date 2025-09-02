@@ -1,503 +1,725 @@
 /* Импорт улучшенных шрифтов */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap')
+layer(base);
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-/* Премиум цветовая палитра для современного дизайна */
-:root {
-  /* Основная цветовая палитра - глубокие синие оттенки */
-  --color-primary: #1e293b;
-  --color-primary-dark: #0f172a;
-  --color-primary-light: #334155;
-  --color-secondary: #475569;
-  --color-accent: #3b82f6;
-  --color-accent-light: #60a5fa;
-  --color-accent-dark: #2563eb;
-  
-  /* Градиентные цвета */
+@theme {
+  --color-primary-50: #f8fafc;
+  --color-primary-100: #f1f5f9;
+  --color-primary-200: #e2e8f0;
+  --color-primary-300: #cbd5e0;
+  --color-primary-400: #94a3b8;
+  --color-primary-500: #64748b;
+  --color-primary-600: #475569;
+  --color-primary-700: #334155;
+  --color-primary-800: #1e293b;
+  --color-primary-900: #0f172a;
+
+  --color-secondary-50: #f8fafc;
+  --color-secondary-100: #f1f5f9;
+  --color-secondary-200: #e2e8f0;
+  --color-secondary-300: #cbd5e0;
+  --color-secondary-400: #94a3b8;
+  --color-secondary-500: #64748b;
+  --color-secondary-600: #475569;
+  --color-secondary-700: #334155;
+  --color-secondary-800: #1e293b;
+  --color-secondary-900: #0f172a;
+
+  --color-accent-50: #eff6ff;
+  --color-accent-100: #dbeafe;
+  --color-accent-200: #bfdbfe;
+  --color-accent-300: #93c5fd;
+  --color-accent-400: #60a5fa;
+  --color-accent-500: #3b82f6;
+  --color-accent-600: #2563eb;
+  --color-accent-700: #1d4ed8;
+  --color-accent-800: #1e40af;
+  --color-accent-900: #1e3a8a;
+
+  --color-success-50: #ecfdf5;
+  --color-success-100: #d1fae5;
+  --color-success-200: #a7f3d0;
+  --color-success-300: #6ee7b7;
+  --color-success-400: #34d399;
+  --color-success-500: #10b981;
+  --color-success-600: #059669;
+  --color-success-700: #047857;
+  --color-success-800: #065f46;
+  --color-success-900: #064e3b;
+
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-200: #fde68a;
+  --color-warning-300: #fcd34d;
+  --color-warning-400: #fbbf24;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+  --color-warning-800: #92400e;
+  --color-warning-900: #78350f;
+
+  --color-error-50: #fef2f2;
+  --color-error-100: #fee2e2;
+  --color-error-200: #fecaca;
+  --color-error-300: #fca5a5;
+  --color-error-400: #f87171;
+  --color-error-500: #ef4444;
+  --color-error-600: #dc2626;
+  --color-error-700: #b91c1c;
+  --color-error-800: #991b1b;
+  --color-error-900: #7f1d1d;
+
   --color-gradient-primary: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+
   --color-gradient-accent: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
-  --color-gradient-warm: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
-  
-  /* Семантические цвета */
-  --color-success: #059669;
-  --color-success-light: #10b981;
-  --color-warning: #d97706;
-  --color-warning-light: #f59e0b;
-  --color-error: #dc2626;
-  --color-error-light: #ef4444;
-  --color-info: #0ea5e9;
-  --color-info-light: #38bdf8;
-  
-  /* Нейтральные цвета - улучшенная контрастность */
-  --color-text: #0f172a;
-  --color-text-light: #475569;
-  --color-text-muted: #64748b;
-  --color-bg: #ffffff;
-  --color-bg-secondary: #f8fafc;
-  --color-bg-tertiary: #f1f5f9;
-  --color-bg-accent: #f0f9ff;
-  --color-border: #e2e8f0;
-  --color-border-light: #f1f5f9;
-  --color-shadow: rgba(15, 23, 42, 0.08);
-  --color-shadow-lg: rgba(15, 23, 42, 0.12);
-  --color-shadow-colored: rgba(59, 130, 246, 0.15);
-  
-  /* Размеры и отступы - современные значения */
-  --border-radius: 12px;
-  --border-radius-lg: 16px;
-  --border-radius-xl: 20px;
-  --border-radius-2xl: 24px;
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  
-  /* Анимации */
-  --transition-fast: 150ms ease-out;
-  --transition-normal: 250ms ease-out;
-  --transition-slow: 350ms ease-out;
-}
 
-.dark {
-  /* Премиум темная тема */
-  --color-primary: #334155;
-  --color-primary-dark: #1e293b;
-  --color-primary-light: #475569;
-  --color-secondary: #64748b;
-  --color-accent: #60a5fa;
-  --color-accent-light: #93c5fd;
-  --color-accent-dark: #3b82f6;
-  
-  /* Градиентные цвета для темной темы */
-  --color-gradient-primary: linear-gradient(135deg, #334155 0%, #475569 100%);
-  --color-gradient-accent: linear-gradient(135deg, #60a5fa 0%, #93c5fd 100%);
-  --color-gradient-warm: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-  
-  /* Семантические цвета для темной темы */
-  --color-success: #10b981;
-  --color-success-light: #34d399;
-  --color-warning: #f59e0b;
-  --color-warning-light: #fbbf24;
-  --color-error: #ef4444;
-  --color-error-light: #f87171;
-  --color-info: #38bdf8;
-  --color-info-light: #7dd3fc;
-  
-  /* Нейтральные цвета для темной темы */
-  --color-text: #f8fafc;
-  --color-text-light: #e2e8f0;
-  --color-text-muted: #94a3b8;
-  --color-bg: #0f172a;
-  --color-bg-secondary: #1e293b;
-  --color-bg-tertiary: #334155;
-  --color-bg-accent: #1e293b;
-  --color-border: #334155;
-  --color-border-light: #1e293b;
-  --color-shadow: rgba(0, 0, 0, 0.4);
-  --color-shadow-lg: rgba(0, 0, 0, 0.6);
-  --color-shadow-colored: rgba(59, 130, 246, 0.25);
-}
+  --color-morent-navy: #1e293b;
+  --color-morent-coral: #f87171;
 
-/* Базовые стили */
-* {
-  box-sizing: border-box;
-}
+  --font-heading: Playfair Display, serif;
+  --font-body: Inter, sans-serif;
+  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-serif: Playfair Display, ui-serif, Georgia, serif;
+  --font-mono:
+    JetBrains Mono, ui-monospace, SFMono-Regular, Consolas, monospace;
 
-html {
-  scroll-behavior: smooth;
-  font-size: 16px;
-}
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 1rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 2rem;
+  --text-3xl: 1.875rem;
+  --text-3xl--line-height: 2.25rem;
+  --text-4xl: 2.25rem;
+  --text-4xl--line-height: 2.5rem;
+  --text-5xl: 3rem;
+  --text-5xl--line-height: 1;
+  --text-6xl: 3.75rem;
+  --text-6xl--line-height: 1;
 
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  transition: background-color 0.3s ease, color 0.3s ease;
-  line-height: 1.6;
-  font-weight: 400;
-}
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
 
-/* Улучшенная типографика */
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Playfair Display', serif;
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--color-text);
-  margin-bottom: 0.75rem;
-  letter-spacing: -0.025em;
-}
+  --shadow-soft:
+    0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
+  --shadow-medium:
+    0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-large:
+    0 10px 40px -10px rgba(0, 0, 0, 0.15), 0 2px 10px -2px rgba(0, 0, 0, 0.05);
+  --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.3);
+  --shadow-glow-lg: 0 0 40px rgba(59, 130, 246, 0.4);
+  --shadow-colored: 0 4px 14px 0 rgba(59, 130, 246, 0.15);
+  --shadow-colored-lg: 0 8px 30px 0 rgba(59, 130, 246, 0.25);
 
-h1 { 
-  font-size: clamp(2rem, 5vw, 3rem);
-  font-weight: 800;
-  letter-spacing: -0.05em;
-}
-h2 { 
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
-  font-weight: 700;
-}
-h3 { 
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  font-weight: 600;
-}
-h4 { 
-  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
-  font-weight: 600;
-}
-h5 { 
-  font-size: clamp(1.125rem, 2vw, 1.5rem);
-  font-weight: 500;
-}
-h6 { 
-  font-size: clamp(1rem, 1.5vw, 1.25rem);
-  font-weight: 500;
-}
+  --animate-fade-in: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-up: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-bounce-in: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --animate-scale-in: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-in-left: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-in-right: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-glow: glow 2s ease-in-out infinite alternate;
 
-p {
-  margin-bottom: 1.25rem;
-  color: var(--color-text-light);
-  line-height: 1.7;
-  font-weight: 400;
-}
-
-/* Специальные текстовые стили */
-.text-display {
-  font-family: 'Playfair Display', serif;
-  font-weight: 800;
-  letter-spacing: -0.05em;
-}
-
-.text-code {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 500;
-}
-
-/* Кастомные компоненты */
-@layer components {
-  /* Современные кнопки с градиентами */
-  .btn {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 relative overflow-hidden;
-    box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
   }
-  
-  .btn::before {
+  @keyframes slideUp {
+    0% {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  @keyframes bounceIn {
+    0% {
+      transform: scale(0.3);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    70% {
+      transform: scale(0.9);
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  @keyframes scaleIn {
+    0% {
+      transform: scale(0.95);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  @keyframes slideInLeft {
+    0% {
+      transform: translateX(-30px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  @keyframes slideInRight {
+    0% {
+      transform: translateX(30px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  @keyframes glow {
+    0% {
+      box-shadow:
+        0 0 5px rgba(59, 130, 246, 0.2),
+        0 0 10px rgba(59, 130, 246, 0.2),
+        0 0 15px rgba(59, 130, 246, 0.2);
+    }
+    100% {
+      box-shadow:
+        0 0 10px rgba(59, 130, 246, 0.4),
+        0 0 20px rgba(59, 130, 246, 0.4),
+        0 0 30px rgba(59, 130, 246, 0.4);
+    }
+  }
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility btn {
+  /* Современные кнопки с градиентами */
+  @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 relative overflow-hidden;
+  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
+
+  &::before {
     content: '';
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
     transition: left 0.5s;
   }
-  
-  .btn:hover::before {
+
+  &:hover::before {
     left: 100%;
   }
-  
-  .btn-primary {
-    background: var(--color-gradient-accent);
-    color: white;
-    border: none;
-    @apply focus:ring-blue-500 hover:shadow-lg hover:shadow-blue-500/25;
-  }
-  
-  .btn-secondary {
-    @apply bg-white text-slate-700 border-2 border-slate-200 hover:bg-slate-50 hover:border-slate-300 focus:ring-slate-500 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-600 dark:hover:bg-slate-700 dark:hover:border-slate-500;
-  }
-
-  .btn-success {
-    background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-light) 100%);
-    color: white;
-    @apply focus:ring-emerald-500 hover:shadow-lg hover:shadow-emerald-500/25;
-  }
-  
-  .btn-danger {
-    background: linear-gradient(135deg, var(--color-error) 0%, var(--color-error-light) 100%);
-    color: white;
-    @apply focus:ring-red-500 hover:shadow-lg hover:shadow-red-500/25;
-  }
-
-  .btn-ghost {
-    @apply bg-transparent text-slate-600 hover:bg-slate-100 focus:ring-slate-500 dark:text-slate-300 dark:hover:bg-slate-800;
-    box-shadow: none;
-  }
-
-  .btn-sm {
-    @apply px-4 py-2 text-xs rounded-lg;
-  }
-
-  .btn-lg {
-    @apply px-8 py-4 text-base rounded-2xl;
-  }
-  
-  .btn-mobile {
-    @apply w-full sm:w-auto;
-  }
-  
+}
+@utility btn-primary {
+  background: var(--color-gradient-accent);
+  color: white;
+  border: none;
+  @apply focus:ring-blue-500 hover:shadow-lg hover:shadow-blue-500/25;
+}
+@utility btn-secondary {
+  @apply bg-white text-slate-700 border-2 border-slate-200 hover:bg-slate-50 hover:border-slate-300 focus:ring-slate-500 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-600 dark:hover:bg-slate-700 dark:hover:border-slate-500;
+}
+@utility btn-success {
+  background: linear-gradient(
+    135deg,
+    var(--color-success) 0%,
+    var(--color-success-light) 100%
+  );
+  color: white;
+  @apply focus:ring-emerald-500 hover:shadow-lg hover:shadow-emerald-500/25;
+}
+@utility btn-danger {
+  background: linear-gradient(
+    135deg,
+    var(--color-error) 0%,
+    var(--color-error-light) 100%
+  );
+  color: white;
+  @apply focus:ring-red-500 hover:shadow-lg hover:shadow-red-500/25;
+}
+@utility btn-ghost {
+  @apply bg-transparent text-slate-600 hover:bg-slate-100 focus:ring-slate-500 dark:text-slate-300 dark:hover:bg-slate-800;
+  box-shadow: none;
+}
+@utility btn-sm {
+  @apply px-4 py-2 text-xs rounded-lg;
+}
+@utility btn-lg {
+  @apply px-8 py-4 text-base rounded-2xl;
+}
+@utility btn-mobile {
+  @apply w-full sm:w-auto;
+}
+@utility btn-action {
   /* Современные кнопки действий */
-  .btn-action {
-    @apply inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95;
-  }
-  
-  .btn-action-edit {
-    @apply bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 hover:border-blue-300 focus:ring-blue-500 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800 dark:hover:bg-blue-900/30;
-  }
-  
-  .btn-action-delete {
-    @apply bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 hover:border-red-300 focus:ring-red-500 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/30;
-  }
-  
-  .btn-action-copy {
-    @apply bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300 focus:ring-emerald-500 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800 dark:hover:bg-emerald-900/30;
-  }
-  
-  .btn-action-generate {
-    @apply bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 hover:border-purple-300 focus:ring-purple-500 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800 dark:hover:bg-purple-900/30;
-  }
-  
+  @apply inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95;
+}
+@utility btn-action-edit {
+  @apply bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 hover:border-blue-300 focus:ring-blue-500 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800 dark:hover:bg-blue-900/30;
+}
+@utility btn-action-delete {
+  @apply bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 hover:border-red-300 focus:ring-red-500 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/30;
+}
+@utility btn-action-copy {
+  @apply bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300 focus:ring-emerald-500 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800 dark:hover:bg-emerald-900/30;
+}
+@utility btn-action-generate {
+  @apply bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 hover:border-purple-300 focus:ring-purple-500 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800 dark:hover:bg-purple-900/30;
+}
+@utility actions-dropdown {
   /* Dropdown для кнопок действий */
-  .actions-dropdown {
-    @apply relative inline-block;
-  }
-  
-  .actions-dropdown-button {
-    @apply inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500 transition-all duration-200 dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-slate-600 dark:hover:text-slate-200;
-  }
-  
-  .actions-dropdown-menu {
-    @apply absolute right-0 top-full mt-1 min-w-[160px] bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 py-2 z-10 opacity-0 invisible transform scale-95 transition-all duration-200;
-  }
-  
-  .actions-dropdown.open .actions-dropdown-menu {
+  @apply relative inline-block;
+
+  &.open .actions-dropdown-menu {
     @apply opacity-100 visible scale-100;
   }
-  
-  .actions-dropdown-item {
-    @apply flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors cursor-pointer;
-  }
+}
+@utility actions-dropdown-button {
+  @apply inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-slate-500 transition-all duration-200 dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-slate-600 dark:hover:text-slate-200;
+}
+@utility actions-dropdown-menu {
+  @apply absolute right-0 top-full mt-1 min-w-[160px] bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 py-2 z-10 opacity-0 invisible transform scale-95 transition-all duration-200;
 
-  /* Современные поля ввода */
-  .input-field {
-    @apply w-full px-4 py-3.5 border-2 border-slate-200 rounded-xl bg-white text-slate-900 placeholder-slate-400 transition-all duration-300 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-blue-400;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  .actions-dropdown.open & {
+    @apply opacity-100 visible scale-100;
   }
-  
-  .input-field:focus {
+}
+@utility open {
+  &.actions-dropdown .actions-dropdown-menu {
+    @apply opacity-100 visible scale-100;
+  }
+}
+@utility actions-dropdown-item {
+  @apply flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors cursor-pointer;
+}
+@utility input-field {
+  /* Современные поля ввода */
+  @apply w-full px-4 py-3.5 border-2 border-slate-200 rounded-xl bg-white text-slate-900 placeholder-slate-400 transition-all duration-300 focus:outline-hidden focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-blue-400;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+
+  &:focus {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px 0 rgba(59, 130, 246, 0.15);
   }
-  
-  .input-link {
-    @apply input-field font-mono text-sm;
-  }
-
+}
+@utility input-link {
+  @apply input-field font-mono text-sm;
+}
+@utility card {
   /* Улучшенные карточки */
-  .card {
-    @apply bg-white rounded-2xl border border-slate-200 overflow-hidden transition-all duration-300 hover:shadow-lg dark:bg-slate-800 dark:border-slate-700;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  }
-  
-  .card:hover {
+  @apply bg-white rounded-2xl border border-slate-200 overflow-hidden transition-all duration-300 hover:shadow-lg dark:bg-slate-800 dark:border-slate-700;
+  box-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px 0 rgba(0, 0, 0, 0.06);
+
+  &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    box-shadow:
+      0 10px 25px -5px rgba(0, 0, 0, 0.1),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
-  
-  .card-simple {
-    @apply bg-white rounded-xl border border-slate-200 transition-all duration-200 hover:shadow-md dark:bg-slate-800 dark:border-slate-700;
-  }
-  
-  .card-enhanced {
-    @apply bg-white rounded-2xl border border-slate-200 backdrop-blur-sm transition-all duration-300 hover:shadow-xl dark:bg-slate-800/90 dark:border-slate-700;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  }
-
-  .card-header {
-    @apply px-6 py-5 border-b border-slate-200 bg-slate-50/50 dark:border-slate-700 dark:bg-slate-900/50;
-  }
-
-  .card-body {
-    @apply px-6 py-5;
-  }
-
-  .card-footer {
-    @apply px-6 py-5 border-t border-slate-200 bg-slate-50/50 dark:border-slate-700 dark:bg-slate-900/50;
-  }
-
+}
+@utility card-simple {
+  @apply bg-white rounded-xl border border-slate-200 transition-all duration-200 hover:shadow-md dark:bg-slate-800 dark:border-slate-700;
+}
+@utility card-enhanced {
+  @apply bg-white rounded-2xl border border-slate-200 backdrop-blur-xs transition-all duration-300 hover:shadow-xl dark:bg-slate-800/90 dark:border-slate-700;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+@utility card-header {
+  @apply px-6 py-5 border-b border-slate-200 bg-slate-50/50 dark:border-slate-700 dark:bg-slate-900/50;
+}
+@utility card-body {
+  @apply px-6 py-5;
+}
+@utility card-footer {
+  @apply px-6 py-5 border-t border-slate-200 bg-slate-50/50 dark:border-slate-700 dark:bg-slate-900/50;
+}
+@utility nav-link {
   /* Современная навигация */
-  .nav-link {
-    @apply px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-2 relative overflow-hidden;
-  }
+  @apply px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-2 relative overflow-hidden;
+}
+@utility nav-link-active {
+  background: var(--color-gradient-accent);
+  color: white;
+  box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.25);
+}
+@utility nav-link-inactive {
+  @apply text-slate-600 hover:bg-slate-100 hover:text-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100;
 
-  .nav-link-active {
-    background: var(--color-gradient-accent);
-    color: white;
-    box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.25);
-  }
-
-  .nav-link-inactive {
-    @apply text-slate-600 hover:bg-slate-100 hover:text-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100;
-  }
-  
-  .nav-link-inactive:hover {
+  &:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.1);
   }
-
+}
+@utility badge {
   /* Современные бейджи */
-  .badge {
-    @apply inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold;
-  }
-
-  .badge-primary {
-    background: var(--color-gradient-accent);
-    color: white;
-  }
-
-  .badge-success {
-    @apply bg-emerald-100 text-emerald-800 dark:bg-emerald-800/20 dark:text-emerald-300;
-  }
-
-  .badge-warning {
-    @apply bg-amber-100 text-amber-800 dark:bg-amber-800/20 dark:text-amber-300;
-  }
-
-  .badge-error {
-    @apply bg-red-100 text-red-800 dark:bg-red-800/20 dark:text-red-300;
-  }
-
-  .badge-info {
-    @apply bg-blue-100 text-blue-800 dark:bg-blue-800/20 dark:text-blue-300;
-  }
-
+  @apply inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold;
+}
+@utility badge-primary {
+  background: var(--color-gradient-accent);
+  color: white;
+}
+@utility badge-success {
+  @apply bg-emerald-100 text-emerald-800 dark:bg-emerald-800/20 dark:text-emerald-300;
+}
+@utility badge-warning {
+  @apply bg-amber-100 text-amber-800 dark:bg-amber-800/20 dark:text-amber-300;
+}
+@utility badge-error {
+  @apply bg-red-100 text-red-800 dark:bg-red-800/20 dark:text-red-300;
+}
+@utility badge-info {
+  @apply bg-blue-100 text-blue-800 dark:bg-blue-800/20 dark:text-blue-300;
+}
+@utility skeleton {
   /* Скелетон */
-  .skeleton {
-    @apply animate-pulse bg-[#edf2f7] rounded dark:bg-[#4a5568];
-  }
-
+  @apply animate-pulse bg-[#edf2f7] rounded-sm dark:bg-[#4a5568];
+}
+@utility gradient-primary {
   /* Градиенты */
-  .gradient-primary {
-    background: linear-gradient(135deg, #1a365d 0%, #2d5a87 100%);
-  }
-
-  .gradient-accent {
-    background: linear-gradient(135deg, #3182ce 0%, #4299e1 100%);
-  }
-
-  .text-gradient {
-    background: linear-gradient(135deg, #1a365d 0%, #2d5a87 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
+  background: linear-gradient(135deg, #1a365d 0%, #2d5a87 100%);
+}
+@utility gradient-accent {
+  background: linear-gradient(135deg, #3182ce 0%, #4299e1 100%);
+}
+@utility text-gradient {
+  background: linear-gradient(135deg, #1a365d 0%, #2d5a87 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+@utility table {
   /* Таблицы */
-  .table {
-    @apply w-full border-collapse;
-  }
+  @apply w-full border-collapse;
 
-  .table th {
+  & th {
     @apply px-4 py-3 text-left text-sm font-semibold text-[#1a202c] bg-[#f7fafc] border-b border-[#e2e8f0] dark:text-white dark:bg-[#1a202c] dark:border-[#4a5568];
   }
 
-  .table td {
+  & td {
     @apply px-4 py-3 text-sm text-[#4a5568] border-b border-[#e2e8f0] dark:text-[#a0aec0] dark:border-[#4a5568];
   }
 
-  .table tbody tr:hover {
+  & tbody tr:hover {
     @apply bg-[#f7fafc] dark:bg-[#2d3748];
   }
-
+}
+@utility form-group {
   /* Формы */
-  .form-group {
-    @apply mb-6;
-  }
-
-  .form-label {
-    @apply block text-sm font-medium text-[#1a202c] mb-2 dark:text-white;
-  }
-
-  .form-error {
-    @apply text-[#e53e3e] text-sm mt-1;
-  }
-
-  .form-help {
-    @apply text-[#718096] text-sm mt-1 dark:text-[#a0aec0];
-  }
-
+  @apply mb-6;
+}
+@utility form-label {
+  @apply block text-sm font-medium text-[#1a202c] mb-2 dark:text-white;
+}
+@utility form-error {
+  @apply text-[#e53e3e] text-sm mt-1;
+}
+@utility form-help {
+  @apply text-[#718096] text-sm mt-1 dark:text-[#a0aec0];
+}
+@utility modal-overlay {
   /* Модальные окна */
-  .modal-overlay {
-    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4;
-  }
-
-  .modal-content {
-    @apply bg-white rounded-xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto dark:bg-[#2d3748];
-  }
-
+  @apply fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4;
+}
+@utility modal-content {
+  @apply bg-white rounded-xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto dark:bg-[#2d3748];
+}
+@utility notification {
   /* Уведомления */
-  .notification {
-    @apply fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm;
-  }
-
-  .notification-success {
-    @apply bg-[#38a169] text-white;
-  }
-
-  .notification-error {
-    @apply bg-[#e53e3e] text-white;
-  }
-
-  .notification-warning {
-    @apply bg-[#d69e2e] text-white;
-  }
-
-  .notification-info {
-    @apply bg-[#3182ce] text-white;
-  }
+  @apply fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm;
+}
+@utility notification-success {
+  @apply bg-[#38a169] text-white;
+}
+@utility notification-error {
+  @apply bg-[#e53e3e] text-white;
+}
+@utility notification-warning {
+  @apply bg-[#d69e2e] text-white;
+}
+@utility notification-info {
+  @apply bg-[#3182ce] text-white;
 }
 
 /* Улучшенные анимации */
+@utility animate-fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@utility animate-slide-up {
+  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@utility animate-bounce-in {
+  animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+@utility animate-scale-in {
+  animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@utility animate-slide-in-left {
+  animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@utility animate-slide-in-right {
+  animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@utility animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+@utility animate-glow {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
 @layer utilities {
-  .animate-fade-in {
-    animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Премиум цветовая палитра для современного дизайна */
+  :root {
+    /* Основная цветовая палитра - глубокие синие оттенки */
+    --color-primary: #1e293b;
+    --color-primary-dark: #0f172a;
+    --color-primary-light: #334155;
+    --color-secondary: #475569;
+    --color-accent: #3b82f6;
+    --color-accent-light: #60a5fa;
+    --color-accent-dark: #2563eb;
+
+    /* Градиентные цвета */
+    --color-gradient-primary: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    --color-gradient-accent: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+    --color-gradient-warm: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+
+    /* Семантические цвета */
+    --color-success: #059669;
+    --color-success-light: #10b981;
+    --color-warning: #d97706;
+    --color-warning-light: #f59e0b;
+    --color-error: #dc2626;
+    --color-error-light: #ef4444;
+    --color-info: #0ea5e9;
+    --color-info-light: #38bdf8;
+
+    /* Нейтральные цвета - улучшенная контрастность */
+    --color-text: #0f172a;
+    --color-text-light: #475569;
+    --color-text-muted: #64748b;
+    --color-bg: #ffffff;
+    --color-bg-secondary: #f8fafc;
+    --color-bg-tertiary: #f1f5f9;
+    --color-bg-accent: #f0f9ff;
+    --color-border: #e2e8f0;
+    --color-border-light: #f1f5f9;
+    --color-shadow: rgba(15, 23, 42, 0.08);
+    --color-shadow-lg: rgba(15, 23, 42, 0.12);
+    --color-shadow-colored: rgba(59, 130, 246, 0.15);
+
+    /* Размеры и отступы - современные значения */
+    --border-radius: 12px;
+    --border-radius-lg: 16px;
+    --border-radius-xl: 20px;
+    --border-radius-2xl: 24px;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-md:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg:
+      0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl:
+      0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+    /* Анимации */
+    --transition-fast: 150ms ease-out;
+    --transition-normal: 250ms ease-out;
+    --transition-slow: 350ms ease-out;
   }
 
-  .animate-slide-up {
-    animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  .dark {
+    /* Премиум темная тема */
+    --color-primary: #334155;
+    --color-primary-dark: #1e293b;
+    --color-primary-light: #475569;
+    --color-secondary: #64748b;
+    --color-accent: #60a5fa;
+    --color-accent-light: #93c5fd;
+    --color-accent-dark: #3b82f6;
+
+    /* Градиентные цвета для темной темы */
+    --color-gradient-primary: linear-gradient(135deg, #334155 0%, #475569 100%);
+    --color-gradient-accent: linear-gradient(135deg, #60a5fa 0%, #93c5fd 100%);
+    --color-gradient-warm: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+
+    /* Семантические цвета для темной темы */
+    --color-success: #10b981;
+    --color-success-light: #34d399;
+    --color-warning: #f59e0b;
+    --color-warning-light: #fbbf24;
+    --color-error: #ef4444;
+    --color-error-light: #f87171;
+    --color-info: #38bdf8;
+    --color-info-light: #7dd3fc;
+
+    /* Нейтральные цвета для темной темы */
+    --color-text: #f8fafc;
+    --color-text-light: #e2e8f0;
+    --color-text-muted: #94a3b8;
+    --color-bg: #0f172a;
+    --color-bg-secondary: #1e293b;
+    --color-bg-tertiary: #334155;
+    --color-bg-accent: #1e293b;
+    --color-border: #334155;
+    --color-border-light: #1e293b;
+    --color-shadow: rgba(0, 0, 0, 0.4);
+    --color-shadow-lg: rgba(0, 0, 0, 0.6);
+    --color-shadow-colored: rgba(59, 130, 246, 0.25);
   }
 
-  .animate-bounce-in {
-    animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  /* Базовые стили */
+  * {
+    box-sizing: border-box;
   }
 
-  .animate-scale-in {
-    animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  html {
+    scroll-behavior: smooth;
+    font-size: 16px;
   }
-  
-  .animate-slide-in-left {
-    animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+
+  body {
+    font-family:
+      'Inter',
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      'Roboto',
+      'Oxygen',
+      'Ubuntu',
+      'Cantarell',
+      'Fira Sans',
+      'Droid Sans',
+      'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+    line-height: 1.6;
+    font-weight: 400;
   }
-  
-  .animate-slide-in-right {
-    animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Улучшенная типографика */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-text);
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.025em;
   }
-  
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.05em;
   }
-  
-  .animate-glow {
-    animation: glow 2s ease-in-out infinite alternate;
+  h2 {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
   }
+  h3 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 600;
+  }
+  h4 {
+    font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+    font-weight: 600;
+  }
+  h5 {
+    font-size: clamp(1.125rem, 2vw, 1.5rem);
+    font-weight: 500;
+  }
+  h6 {
+    font-size: clamp(1rem, 1.5vw, 1.25rem);
+    font-weight: 500;
+  }
+
+  p {
+    margin-bottom: 1.25rem;
+    color: var(--color-text-light);
+    line-height: 1.7;
+    font-weight: 400;
+  }
+
+  /* Специальные текстовые стили */
+  .text-display {
+    font-family: 'Playfair Display', serif;
+    font-weight: 800;
+    letter-spacing: -0.05em;
+  }
+
+  .text-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+  }
+
+  /* Кастомные компоненты */
 }
 
 @keyframes fadeIn {
@@ -728,7 +950,7 @@ p {
 
 /* Стили для статусов */
 .status {
-  @apply inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium;
+  @apply inline-flex items-center gap-1 px-2 py-1 rounded-sm text-xs font-medium;
 }
 
 .status-online {
@@ -790,7 +1012,7 @@ p {
 
   /* Стили для счетчиков */
   .counter {
-    @apply inline-flex items-center justify-center min-w-[1.5rem] h-6 px-2 text-xs font-bold text-white rounded-full;
+    @apply inline-flex items-center justify-center min-w-6 h-6 px-2 text-xs font-bold text-white rounded-full;
     background: var(--color-gradient-accent);
     box-shadow: 0 2px 4px 0 rgba(59, 130, 246, 0.25);
   }
