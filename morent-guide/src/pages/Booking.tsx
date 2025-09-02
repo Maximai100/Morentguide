@@ -116,38 +116,41 @@ const BookingPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          {/* Заголовок */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
-            <h1 className="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-2">
-              Добро пожаловать, {booking.guest_name}! 🎉
+          {/* Улучшенный заголовок */}
+          <div className="card-enhanced p-8 mb-8 text-center animate-bounce-in">
+            <div className="text-6xl mb-4 animate-float">🎉</div>
+            <h1 className="text-display text-4xl font-black bg-gradient-to-r from-slate-900 to-blue-600 bg-clip-text text-transparent dark:from-slate-100 dark:to-blue-400 mb-4">
+              Добро пожаловать, {booking.guest_name}!
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              Ваши апартаменты: <span className="font-semibold">{apartment.title}</span>
-            </p>
-            <p className="text-gray-600 dark:text-gray-400">
-              Даты пребывания: <span className="font-semibold">{booking.checkin_date} - {booking.checkout_date}</span>
-            </p>
-              </div>
+            <div className="space-y-2">
+              <p className="text-slate-600 dark:text-slate-300 text-lg">
+                Ваши апартаменты: <span className="font-bold text-blue-600 dark:text-blue-400">{apartment.title}</span>
+              </p>
+              <p className="text-slate-600 dark:text-slate-300">
+                <span className="font-semibold">Даты пребывания:</span> {booking.checkin_date} — {booking.checkout_date}
+              </p>
+            </div>
+          </div>
 
-          {/* Мобильная навигация */}
-          <div className="lg:hidden mb-6">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4">
-              <div className="flex overflow-x-auto space-x-2 pb-2">
+          {/* Улучшенная мобильная навигация */}
+          <div className="lg:hidden mb-8 animate-slide-up">
+            <div className="card-enhanced p-4">
+              <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-hide">
                 {sections.map((section) => (
                   <button
                     key={section.id}
                     onClick={() => setActiveSection(section.id)}
-                    className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    className={`flex-shrink-0 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 ${
                       activeSection === section.id
-                        ? 'bg-[#0e2a3b] text-white'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                        ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-colored'
+                        : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 hover:scale-105'
                     }`}
                   >
-                    <span className="mr-1">{section.icon}</span>
-                    {section.title}
+                    <span className="mr-2 text-lg">{section.icon}</span>
+                    <span>{section.title}</span>
                   </button>
                 ))}
               </div>
@@ -159,25 +162,36 @@ const BookingPage: React.FC = () => {
             <div className="lg:col-span-2 space-y-6">
               {/* Обзор */}
               {activeSection === 'overview' && (
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-                  <h2 className="text-2xl font-heading font-semibold mb-4 text-gray-900 dark:text-white">
-                    🏠 Обзор апартаментов
-                  </h2>
-                  <div className="space-y-4">
-              <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Описание</h3>
-                      <p className="text-gray-700 dark:text-gray-300">
+                <div className="card-enhanced animate-fade-in">
+                  <div className="card-header">
+                    <h2 className="text-2xl font-heading font-bold text-slate-900 dark:text-slate-100 flex items-center gap-3">
+                      <span className="text-3xl">🏠</span>
+                      Обзор апартаментов
+                    </h2>
+                  </div>
+                  <div className="card-body space-y-6">
+                    <div className="animate-slide-in-left">
+                      <h3 className="font-bold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2">
+                        <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                        Описание
+                      </h3>
+                      <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
                         {apartment.description || 'Описание апартаментов будет добавлено позже.'}
                       </p>
-              </div>
-              <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Адрес</h3>
-                      <p className="text-gray-700 dark:text-gray-300">
-                        {apartment.base_address}, корпус {apartment.building_number}, апартамент {apartment.apartment_number}
-                      </p>
-              </div>
-            </div>
-          </div>
+                    </div>
+                    <div className="animate-slide-in-right">
+                      <h3 className="font-bold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2">
+                        <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                        Адрес
+                      </h3>
+                      <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4">
+                        <p className="text-slate-700 dark:text-slate-300 font-medium">
+                          {apartment.base_address}, корпус {apartment.building_number}, апартамент {apartment.apartment_number}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               )}
 
               {/* Фото */}

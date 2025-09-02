@@ -40,11 +40,13 @@ const ThemeToggle: React.FC = () => {
   return (
     <button
       onClick={handleToggle}
-      className="fixed bottom-4 right-4 z-50 w-12 h-12 bg-white dark:bg-gray-800 rounded-full shadow-lg border border-gray-200 dark:border-gray-600 flex items-center justify-center text-xl hover:scale-110 transition-transform duration-200"
+      className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-2xl border border-slate-200/50 dark:border-slate-700/50 flex items-center justify-center text-2xl hover:scale-110 active:scale-95 transition-all duration-300 shadow-xl hover:shadow-2xl group animate-float"
       title={getTooltip()}
       aria-label={getTooltip()}
     >
-      {getIcon()}
+      <span className="group-hover:rotate-12 transition-transform duration-300">
+        {getIcon()}
+      </span>
     </button>
   );
 };

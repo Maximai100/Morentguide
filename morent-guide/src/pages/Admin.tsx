@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import ApartmentForm from '../components/ApartmentForm';
 import BookingForm from '../components/BookingForm';
-import BookingCalendar from '../components/BookingCalendar';
+
 import ApartmentsList from '../components/ApartmentsList';
 import BookingsList from '../components/BookingsList';
 import { apartmentApi, bookingApi } from '../utils/api';
-import { exportToExcel, exportToPDF, exportStatistics } from '../utils/export';
+
 import { initializeReminders, startReminderScheduler } from '../utils/reminders';
 import { showNotification } from '../utils/helpers';
 import type { Apartment, Booking } from '../types';
@@ -20,7 +20,7 @@ const AdminPage: React.FC = () => {
   const [editingBooking, setEditingBooking] = useState<Booking | undefined>(undefined);
 
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'apartments' | 'bookings' | 'calendar'>('apartments');
+  const [activeTab, setActiveTab] = useState<'apartments' | 'bookings'>('apartments');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
@@ -87,33 +87,9 @@ const AdminPage: React.FC = () => {
     setShowBookingForm(true);
   };
 
-  const handleExport = async (format: 'excel' | 'pdf' | 'statistics') => {
-    try {
-      const data = { bookings, apartments };
-      
-      switch (format) {
-        case 'excel':
-          await exportToExcel(data, `morent-data-${new Date().toISOString().split('T')[0]}`);
-          showNotification('Данные экспортированы в Excel', 'success');
-          break;
-        case 'pdf':
-          await exportToPDF(data, `morent-data-${new Date().toISOString().split('T')[0]}`);
-          showNotification('Данные экспортированы в PDF', 'success');
-          break;
-        case 'statistics':
-          await exportStatistics(data, `morent-statistics-${new Date().toISOString().split('T')[0]}`);
-          showNotification('Статистика экспортирована', 'success');
-          break;
-      }
-    } catch (error) {
-      console.error('Ошибка экспорта:', error);
-      showNotification('Ошибка экспорта данных', 'error');
-    }
-  };
 
-  const handleBookingSelect = (_booking: Booking) => {
-    setActiveTab('bookings');
-  };
+
+
 
   if (loading) {
     return (
@@ -127,158 +103,120 @@ const AdminPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Заголовок */}
-      <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+      {/* Улучшенный заголовок */}
+      <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-700/50 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <div className="flex justify-between items-center py-8">
+            <div className="animate-fade-in">
+              <h1 className="text-display text-4xl font-black bg-gradient-to-r from-slate-900 to-blue-600 bg-clip-text text-transparent dark:from-slate-100 dark:to-blue-400">
                 Morent Guide
               </h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">
-                Панель управления апартаментами
+              <p className="text-slate-600 dark:text-slate-400 mt-2 font-medium">
+                Премиум панель управления апартаментами
               </p>
             </div>
             
-            {/* Кнопки экспорта */}
-            <div className="flex space-x-3">
-              <button
-                onClick={() => handleExport('excel')}
-                className="btn btn-success btn-sm"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <span>Excel</span>
-              </button>
-              <button
-                onClick={() => handleExport('pdf')}
-                className="btn btn-danger btn-sm"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <span>PDF</span>
-              </button>
-              <button
-                onClick={() => handleExport('statistics')}
-                className="btn btn-primary btn-sm"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-                <span>Статистика</span>
-              </button>
-            </div>
+
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Навигационные вкладки */}
-        <div className="mb-8">
-          <nav className="flex space-x-8 border-b border-gray-200 dark:border-gray-700">
+        {/* Современные навигационные вкладки */}
+        <div className="mb-10 animate-slide-up">
+          <nav className="flex flex-wrap gap-2 p-2 bg-slate-100/50 dark:bg-slate-800/50 rounded-2xl backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50">
             <button
               onClick={() => setActiveTab('apartments')}
-              className={`nav-link ${
+              className={`nav-link group ${
                 activeTab === 'apartments' ? 'nav-link-active' : 'nav-link-inactive'
               }`}
             >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
-              Апартаменты
-              <span className="counter ml-2">{apartments.length}</span>
+              <span>Апартаменты</span>
+              <span className="counter">{apartments.length}</span>
             </button>
             <button
               onClick={() => setActiveTab('bookings')}
-              className={`nav-link ${
+              className={`nav-link group ${
                 activeTab === 'bookings' ? 'nav-link-active' : 'nav-link-inactive'
               }`}
             >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              Бронирования
-              <span className="counter ml-2">{bookings.length}</span>
+              <span>Бронирования</span>
+              <span className="counter">{bookings.length}</span>
             </button>
-            <button
-              onClick={() => setActiveTab('calendar')}
-              className={`nav-link ${
-                activeTab === 'calendar' ? 'nav-link-active' : 'nav-link-inactive'
-              }`}
-            >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-              Календарь
-            </button>
+
           </nav>
         </div>
 
-        {/* Контент вкладок */}
+        {/* Улучшенный контент вкладок */}
         {activeTab === 'apartments' && (
-          <div>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-                Управление апартаментами
-              </h2>
+          <div className="animate-fade-in">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
+              <div>
+                <h2 className="text-3xl font-heading font-bold text-slate-900 dark:text-slate-100 mb-2">
+                  Управление апартаментами
+                </h2>
+                <p className="text-slate-600 dark:text-slate-400">
+                  Создавайте, редактируйте и управляйте апартаментами
+                </p>
+              </div>
               <button
                 onClick={() => setShowApartmentForm(true)}
-                className="btn btn-primary"
+                className="btn btn-primary group hover:shadow-colored-lg"
               >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-                Добавить апартамент
+                <span>Добавить апартамент</span>
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="animate-slide-up">
               <ApartmentsList onEdit={handleEditApartment} onRefresh={() => setRefreshTrigger(prev => prev + 1)} refreshTrigger={refreshTrigger} />
             </div>
           </div>
         )}
 
         {activeTab === 'bookings' && (
-          <div>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-                Управление бронированиями
-              </h2>
+          <div className="animate-fade-in">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
+              <div>
+                <h2 className="text-3xl font-heading font-bold text-slate-900 dark:text-slate-100 mb-2">
+                  Управление бронированиями
+                </h2>
+                <p className="text-slate-600 dark:text-slate-400">
+                  Отслеживайте и управляйте всеми бронированиями
+                </p>
+              </div>
               <button
                 onClick={() => setShowBookingForm(true)}
-                className="btn btn-primary"
+                className="btn btn-primary group hover:shadow-colored-lg"
               >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-                Добавить бронирование
+                <span>Добавить бронирование</span>
               </button>
             </div>
 
-            <div className="card overflow-hidden">
+            <div className="card-enhanced animate-slide-up">
               <BookingsList onEdit={handleEditBooking} onRefresh={() => setRefreshTrigger(prev => prev + 1)} refreshTrigger={refreshTrigger} />
             </div>
           </div>
         )}
 
-        {activeTab === 'calendar' && (
-          <div>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-                Календарь бронирований
-              </h2>
-            </div>
-            <BookingCalendar onBookingSelect={handleBookingSelect} />
-                </div>
-        )}
 
-        {/* Модальные окна */}
+
+        {/* Улучшенные модальные окна */}
         {showApartmentForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+            <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl rounded-3xl border border-slate-200/50 dark:border-slate-700/50 max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-scale-in shadow-2xl">
               <ApartmentForm
                 apartment={editingApartment}
                 onSave={handleApartmentSave}
@@ -292,16 +230,16 @@ const AdminPage: React.FC = () => {
         )}
 
         {showBookingForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-                <BookingForm
-                  booking={editingBooking}
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+            <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl rounded-3xl border border-slate-200/50 dark:border-slate-700/50 max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-scale-in shadow-2xl">
+              <BookingForm
+                booking={editingBooking}
                 onSave={handleBookingSave}
                 onCancel={() => {
                   setShowBookingForm(false);
-                    setEditingBooking(undefined);
-                  }}
-                />
+                  setEditingBooking(undefined);
+                }}
+              />
             </div>
           </div>
         )}

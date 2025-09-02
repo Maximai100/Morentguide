@@ -7,30 +7,30 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Основная цветовая палитра
+        // Обновленная премиум цветовая палитра
         primary: {
-          50: '#f0f4f8',
-          100: '#d9e2ec',
-          200: '#bcccdc',
-          300: '#9fb3c8',
-          400: '#829ab1',
-          500: '#627d98',
-          600: '#486581',
-          700: '#334e68',
-          800: '#2d3748',
-          900: '#1a365d',
-        },
-        secondary: {
-          50: '#f7fafc',
-          100: '#edf2f7',
+          50: '#f8fafc',
+          100: '#f1f5f9',
           200: '#e2e8f0',
           300: '#cbd5e0',
-          400: '#a0aec0',
-          500: '#718096',
-          600: '#4a5568',
-          700: '#2d3748',
-          800: '#1a202c',
-          900: '#171923',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a',
+        },
+        secondary: {
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e0',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a',
         },
         accent: {
           50: '#eff6ff',
@@ -45,16 +45,16 @@ export default {
           900: '#1e3a8a',
         },
         success: {
-          50: '#f0fdf4',
-          100: '#dcfce7',
-          200: '#bbf7d0',
-          300: '#86efac',
-          400: '#4ade80',
-          500: '#22c55e',
-          600: '#16a34a',
-          700: '#15803d',
-          800: '#166534',
-          900: '#14532d',
+          50: '#ecfdf5',
+          100: '#d1fae5',
+          200: '#a7f3d0',
+          300: '#6ee7b7',
+          400: '#34d399',
+          500: '#10b981',
+          600: '#059669',
+          700: '#047857',
+          800: '#065f46',
+          900: '#064e3b',
         },
         warning: {
           50: '#fffbeb',
@@ -80,15 +80,23 @@ export default {
           800: '#991b1b',
           900: '#7f1d1d',
         },
-        // Устаревшие цвета для совместимости
-        'morent-navy': '#1a365d',
-        'morent-coral': '#ff8a95',
+        // Градиентные и специальные цвета
+        'gradient-primary': {
+          DEFAULT: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+        },
+        'gradient-accent': {
+          DEFAULT: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)',
+        },
+        // Совместимость
+        'morent-navy': '#1e293b',
+        'morent-coral': '#f87171',
       },
       fontFamily: {
         'heading': ['Playfair Display', 'serif'],
         'body': ['Inter', 'sans-serif'],
         'sans': ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         'serif': ['Playfair Display', 'ui-serif', 'Georgia', 'serif'],
+        'mono': ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Consolas', 'monospace'],
       },
       fontSize: {
         'xs': ['0.75rem', { lineHeight: '1rem' }],
@@ -116,12 +124,20 @@ export default {
         'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
         'medium': '0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
         'large': '0 10px 40px -10px rgba(0, 0, 0, 0.15), 0 2px 10px -2px rgba(0, 0, 0, 0.05)',
+        'glow': '0 0 20px rgba(59, 130, 246, 0.3)',
+        'glow-lg': '0 0 40px rgba(59, 130, 246, 0.4)',
+        'colored': '0 4px 14px 0 rgba(59, 130, 246, 0.15)',
+        'colored-lg': '0 8px 30px 0 rgba(59, 130, 246, 0.25)',
       },
       animation: {
-        'fade-in': 'fadeIn 0.3s ease-out',
-        'slide-up': 'slideUp 0.3s ease-out',
-        'bounce-in': 'bounceIn 0.5s ease-out',
-        'scale-in': 'scaleIn 0.2s ease-out',
+        'fade-in': 'fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+        'slide-up': 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+        'bounce-in': 'bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+        'scale-in': 'scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+        'slide-in-left': 'slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+        'slide-in-right': 'slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+        'float': 'float 3s ease-in-out infinite',
+        'glow': 'glow 2s ease-in-out infinite alternate',
       },
       keyframes: {
         fadeIn: {
@@ -141,6 +157,22 @@ export default {
         scaleIn: {
           '0%': { transform: 'scale(0.95)', opacity: '0' },
           '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        slideInLeft: {
+          '0%': { transform: 'translateX(-30px)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        slideInRight: {
+          '0%': { transform: 'translateX(30px)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        glow: {
+          '0%': { boxShadow: '0 0 5px rgba(59, 130, 246, 0.2), 0 0 10px rgba(59, 130, 246, 0.2), 0 0 15px rgba(59, 130, 246, 0.2)' },
+          '100%': { boxShadow: '0 0 10px rgba(59, 130, 246, 0.4), 0 0 20px rgba(59, 130, 246, 0.4), 0 0 30px rgba(59, 130, 246, 0.4)' },
         },
       },
     },
